@@ -1,0 +1,38 @@
+{
+    "strength": [
+        "strength save",
+        "athletics"
+    ],
+    "dexterity": [
+        "dexterity save",
+        "acrobatics",
+        "sleight of hand",
+        "stealth"
+    ],
+    "consitution": [
+        "constitution save"
+    ],
+    "intelligence": [
+        "intelligence save",
+        "arcana",
+        "history",
+        "investigation",
+        "nature",
+        "religion"
+    ],
+    "wisdom": [
+        "wisdom save",
+        "animal handling",
+        "insight",
+        "medicine",
+        "perception",
+        "survival"
+    ],
+    "charisma": [
+        "charisma save",
+        "deception",
+        "intimidation",
+        "performance",
+        "persuasion"
+    ]
+}

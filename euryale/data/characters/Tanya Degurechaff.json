@@ -1,0 +1,466 @@
+{
+    "race": "aasimar",
+    "subrace": "protection",
+    "size": "medium",
+    "speed": 30,
+    "gender": "female",
+    "age": 12,
+    "height": "4,0",
+    "weight": "92",
+    "skin": "pale",
+    "eyes": "blue/gold",
+    "hair": "blonde",
+    "level": 14,
+    "classes": {
+        "wizard": [
+            12
+        ],
+        "warlock": [
+            2
+        ]
+    },
+    "subclass": {
+        "wizard": "evocation",
+        "warlock": "outer influence"
+    },
+    "max health": false,
+    "background": "soldier",
+    "religion": "Being X",
+    "abilities": {
+        "strength": 9,
+        "dexterity": 13,
+        "constitution": 12,
+        "intelligence": 19,
+        "wisdom": 13,
+        "charisma": 18
+    },
+    "proficiencies": [
+        "daggers",
+        "darts",
+        "slings",
+        "quarterstaffs",
+        "light crossbows",
+        "poker",
+        "land vehicles",
+        "athletics",
+        "intelligence save",
+        "arcana",
+        "history",
+        "investigation",
+        "wisdom save",
+        "perception",
+        "intimidation",
+        "simple weapons",
+        "light armor"
+    ],
+    "languages": [
+        "western common",
+        "celestial"
+    ],
+    "max_attuned": 4,
+    "attuned": 4,
+    "spell slots": false,
+    "feats": {
+        "passive": {
+            "spell sniper": {},
+            "sculpt spells": {
+                "description": "AoE evocation spells can be made to ignore up to 1 + spell level targets"
+            },
+            "potent cantrip": {
+                "description": "targets take half damage on success against evocation cantrips"
+            },
+            "empowered evocation": {
+                "description": "add int mod to damage roll of wizard evocation spells",
+                "modifies": {
+                    "category": "roll",
+                    "selector": "damage spell",
+                    "subselector": "evocation",
+                    "modtype": "delta special add",
+                    "value": "intelligence modifier"
+                }
+            },
+            "agonizing blast": {
+                "description": "add charisma mod to damage dealt by eldritch blast.",
+                "modifies": {
+                    "blast": {
+                        "category": "roll",
+                        "selector": "damage spell",
+                        "subselector": "eldritch blast",
+                        "modtype": "delta special add",
+                        "value": "charisma modifier"
+                    }
+                }
+            },
+            "misty visions": {
+                "description": "cast silent image at will."
+            },
+            "blue dragon heart": {},
+            "ability score improvement": {},
+            "evocation savant": {
+                "description": "gold and time for learning evocation spells is halved."
+            },
+            "observant": {},
+            "curse of the euryale": {
+                "description": "-2 to all saves",
+                "modifies": {
+                    "saves": {
+                        "category": "roll",
+                        "selector": "save",
+                        "modtype": "delta",
+                        "value": "-2"
+                    }
+                }
+            }
+        },
+        "active": {
+            "radiant soul": {},
+            "healing hands": {},
+            "arcane recovery": {
+                "description": "recover half wizard level worth of spell slots on short rest.",
+                "onrest": {
+                    "type": "short",
+                    "message": "recover half wizard level worth of spell slots"
+                }
+            },
+            "time's end": {},
+            "wizard spellcasting": {},
+            "warlock spellcasting": {}
+        }
+    },
+    "inventory": {
+        "fairy jar": {
+            "description": "heal for 4d4+4 in a 25ft radius",
+            "usetime": "action",
+            "onuse": {
+                "healing": {
+                    "category": "stats",
+                    "selector": "health",
+                    "modtype": "delta",
+                    "value": "4d4+4"
+                },
+                "itemuse": {
+                    "category": "inventory",
+                    "selector": "fairy jar",
+                    "subselector": "quantity",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            }
+        },
+        "military clothing": {},
+        "common clothing": {},
+        "potion of health": {
+            "description": "heal for 1d4+4",
+            "usetime": "action",
+            "onuse": {
+                "healing": {
+                    "category": "stats",
+                    "selector": "health",
+                    "modtype": "delta",
+                    "value": "1d4+4"
+                },
+                "itemuse": {
+                    "category": "inventory",
+                    "selector": "potion of health",
+                    "subselector": "quantity",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            }
+        },
+        "region map of the west": {},
+        "military insignia": {
+            "description": "denotes authentic rank in Rashekti army"
+        },
+        "deck of cards": {},
+        "brooch of pelor": {},
+        "dagger": {},
+        "spellbook": {},
+        "explorer's pack": {},
+        "light crossbow": {
+            "usetime": "action",
+            "onuse": {
+                "fire": {
+                    "category": "inventory",
+                    "selector": "crossbow bolts",
+                    "subselector": "quantity",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            }
+        },
+        "crossbow bolts": {
+            "quantity": 30
+        },
+        "beholder eye": {
+            "description": "cast antimagic field once per day",
+            "max charges": 1,
+            "charges": 1,
+            "usetime": "action",
+            "onuse": {
+                "self1": {
+                    "category": "inventory",
+                    "selector": "beholder eye",
+                    "subselector": "charges",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            }
+        },
+        "fear ray beholder stalk": {
+            "description": "cast fear once per day",
+            "max charges": 1,
+            "charges": 1,
+            "usetime": "action",
+            "onuse": {
+                "cast": {
+                    "category": "inventory",
+                    "selector": "fear ray beholder stalk",
+                    "subselector": "charges",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            }
+        },
+        "slowing ray beholder stalk": {
+            "description": "cast slow once per day",
+            "max charges": 1,
+            "charges": 1,
+            "usetime": "action",
+            "onuse": {
+                "cast": {
+                    "category": "inventory",
+                    "selector": "slowing ray beholder stalk",
+                    "subselector": "charges",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            }
+        },
+        "petrification ray beholder stalk": {
+            "description": "cast petrification once per day",
+            "max charges": 1,
+            "charges": 1,
+            "usetime": "action",
+            "onuse": {
+                "cast": {
+                    "category": "inventory",
+                    "selector": "petrification ray beholder stalk",
+                    "subselector": "charges",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            }
+        },
+        "hair tie": {},
+        "gold dragon comb": {
+            "description": "inlayed with red garnet eyes"
+        },
+        "ring of eibon": {
+            "description": "A ring which gives brief futuresight. You cannot be surprised, roll for initiative with advantage, and may use the ring as a bonus action to either grant advantage/disadvantage, or ready your action with advanced properties",
+            "category": "magic item",
+            "requires attunement": true,
+            "attuned": true,
+            "equipped": true,
+            "max charges": 1,
+            "charges": 1,
+            "modifies": {
+                "initiative": {
+                    "category": "roll",
+                    "selector": "initiative",
+                    "modtype": "advantage"
+                }
+            },
+            "usetime": "bonus action",
+            "onuse": {
+                "charges": {
+                    "category": "inventory",
+                    "selector": "ring of eibon",
+                    "subselector": "charges",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            }
+        },
+        "scarab of protection": {
+            "description": "grants advantage on saves against spells.",
+            "category": "magic item",
+            "requires attunement": true,
+            "attuned": true,
+            "equipped": true,
+            "max charges": 1,
+            "charges": 1,
+            "usetime": "reaction",
+            "onuse": {
+                "charges": {
+                    "category": "inventory",
+                    "selector": "ring of eibon",
+                    "subselector": "charges",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            },
+            "modifies": {
+                "spell saves": {
+                    "category": "roll",
+                    "selector": "save",
+                    "subselector": "spell",
+                    "modtype": "advantage"
+                }
+            }
+        },
+        "staff of power": {
+            "description": "spellcasting focus. grants +2 to attack and damage rolls with it. Gain +2 bonus to AC, saving throws, spell attack rolls. Power Strike. Spells. Retributive Strike.",
+            "category": "magic item",
+            "requires attunement": true,
+            "attuned": true,
+            "equipped": true,
+            "usetime": "action",
+            "max charges": 20,
+            "charges": 20,
+            "modifies": {
+                "self attack": {
+                    "category": "roll",
+                    "selector": "attack melee",
+                    "subselector": "staff of power",
+                    "modtype": "delta",
+                    "value": "2"
+                },
+                "self damage": {
+                    "category": "roll",
+                    "selector": "damage melee",
+                    "subselector": "staff of power",
+                    "modtype": "delta",
+                    "value": "2"
+                },
+                "AC": {
+                    "category": "stat",
+                    "selector": "armor class",
+                    "modtype": "delta",
+                    "value": "2"
+                },
+                "save": {
+                    "category": "roll",
+                    "selector": "save",
+                    "subselector": "all",
+                    "modtype": "delta",
+                    "value": "2"
+                },
+                "spell attack": {
+                    "category": "roll",
+                    "selector": "attack spell",
+                    "modtype": "delta",
+                    "value": "2"
+                }
+            },
+            "onuse": {
+                "charges": {
+                    "category": "inventory",
+                    "selector": "staff of power",
+                    "subselector": "charges",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            }
+        },
+        "ring of telekinesis": {
+            "description": "cast telekinesis at will on objects which are not worn or carried",
+            "category": "magic item",
+            "requires attunement": true,
+            "attuned": true,
+            "equipped": true
+        },
+        "potion of supreme healing": {
+            "description": "heal for 10d4+20",
+            "usetime": "action",
+            "onuse": {
+                "healing": {
+                    "category": "stats",
+                    "selector": "health",
+                    "modtype": "delta",
+                    "value": "10d4+20"
+                },
+                "itemuse": {
+                    "category": "inventory",
+                    "selector": "potion of supreme healing",
+                    "subselector": "quantity",
+                    "modtype": "delta",
+                    "value": "-1"
+                }
+            }
+        },
+        "platinum pieces": {
+            "quantity": 15
+        },
+        "gold pieces": {
+            "quantity": 5071
+        },
+        "bank gold": {
+            "quantity": 2376
+        }
+    },
+    "notes": [],
+    "spells": {
+        "0": {
+            "light": {},
+            "message": {},
+            "firebolt": {},
+            "ray of frost": {},
+            "chill touch": {},
+            "magic stone": {}
+        },
+        "1": {
+            "chromatic orb": {},
+            "witch bolt": {},
+            "magic missile": {},
+            "shield": {},
+            "mage armor": {},
+            "alarm": {},
+            "ice knife": {},
+            "expeditious retreat": {},
+            "rope trick": {},
+            "detect magic": {},
+            "find familiar": {},
+            "silent image": {},
+            "false life": {},
+            "hellish rebuke": {},
+            "hex": {},
+            "unseen servant": {},
+            "protection from evil and good": {},
+            "longstrider": {}
+        },
+        "2": {
+            "blur": {},
+            "aganazar's scorcher": {},
+            "misty step": {},
+            "cloud of daggers": {},
+            "mirror image": {},
+            "alter self": {},
+            "leomund's tiny hut": {},
+            "melf's acid arrow": {}
+        },
+        "3": {
+            "counterspell": {},
+            "fireball": {},
+            "melf's minute meteors": {},
+            "lightning bolt": {},
+            "nondetection": {},
+            "magic circle": {}
+        },
+        "5": {
+            "enervation": {},
+            "teleportation circle": {},
+            "contact other plane": {},
+            "telekinesis": {},
+            "wall of force": {}
+        },
+        "6": {
+            "mental prison": {},
+            "chain lightning": {},
+            "disintegrate": {}
+        },
+        "7": {
+            "plane shift": {}
+        }
+    }
+}
