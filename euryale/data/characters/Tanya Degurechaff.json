@@ -13,15 +13,11 @@
     "level": 14,
     "classes": {
         "wizard": [
-            12
-        ],
-        "warlock": [
-            2
+            15
         ]
     },
     "subclass": {
-        "wizard": "evocation",
-        "warlock": "outer influence"
+        "wizard": "evocation"
     },
     "max health": false,
     "background": "soldier",

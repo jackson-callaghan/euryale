@@ -41,19 +41,21 @@ class Character:
         self._max_health = kwargs.get("max health")
         self.background = kwargs.get("background")
         self.religion = kwargs.get("religion")
-        self.strength = kwargs.get("strength")
-        self.dexterity = kwargs.get("dexterity")
-        self.constitution = kwargs.get("constitution")
-        self.intelligence = kwargs.get("intelligence")
-        self.wisdom = kwargs.get("wisdom")
-        self.charisma = kwargs.get("charisma")
+
+        self.strength = kwargs.get("abilities").get("strength")
+        self.dexterity = kwargs.get("abilities").get("dexterity")
+        self.constitution = kwargs.get("abilities").get("constitution")
+        self.intelligence = kwargs.get("abilities").get("intelligence")
+        self.wisdom = kwargs.get("abilities").get("wisdom")
+        self.charisma = kwargs.get("abilities").get("charisma")
+
         self.proficiencies = kwargs.get("proficiencies")
         self.expertise = kwargs.get("expertise")
         self.languages = kwargs.get("languages")
         self.feats = kwargs.get("feats")
         self.inventory = kwargs.get("inventory")
 
-        with open("classes.json", "r") as classes_file:
+        with open("../data/classes.json", "r") as classes_file:
             self.class_list = json.load(classes_file)
 
         # basic calculable values which should be updated manually
@@ -80,8 +82,8 @@ class Character:
 
         """
         max_hit_dice = {}
-        for key, val in self.classes.items():
-            max_hit_dice[str(self.class_list[key]["hit die"])] = val
+        for class_, level in self.classes.items():
+            max_hit_dice[str(self.class_list[class_]["hit die"])] = level
         return max_hit_dice
 
     @property
@@ -96,8 +98,9 @@ class Character:
             return self._max_health
         else:
             total = 0
-            for die, amount in self.max_hit_dice.items():
-                total += (((int(die) / 2)+1) + self.constitution_mod) * amount
+            for die, lvl in self.max_hit_dice.items():
+                total += (((int(die) / 2)+1) + self.constitution_mod) * lvl
+                # apparently trying to multiply sequence and float?
             for class_, lvl in self.classes.items():
                 if isinstance(lvl, list):
                     total += (int(self.class_list[class_]["hit die"]) / 2) - 1
