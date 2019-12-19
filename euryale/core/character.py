@@ -1,42 +1,35 @@
-"""Character Sheet.
+"""character.py
 
-Contains everything you need to run a character sheet. "Headless", because
-it's the job of another thing to render and interact with this.
+Contains the Character class, which manages information storage during runtime.
 """
 
 import json
 import math
-import random
-import re
 
 
 class Character:
     """Character class."""
 
-    def __init__(self, name, from_file=False, **kwargs):
-        # load config files
-        if from_file is not False:
-            with open(from_file, "r") as character_file:
-                kwargs = json.load(character_file)
+    def __init__(self, cdata):
 
         # "incalculable" values
-        self.name = name
-        self.race = kwargs.get("race")
-        self.subrace = kwargs.get("subrace")
-        self.size = kwargs.get("size")
-        self.speed = kwargs.get("speed")
-        self.gender = kwargs.get("gender")
-        self.age = kwargs.get("age")
-        self.height = kwargs.get("height")
-        self.weight = kwargs.get("weight")
-        self.skin = kwargs.get("skin")
-        self.eyes = kwargs.get("eyes")
-        self.hair = kwargs.get("hair")
-        self.character_level = kwargs.get("level")
+        self.name = cdata.get("name")
+        self.race = cdata.get("race")
+        self.subrace = cdata.get("subrace")
+        self.size = cdata.get("size")
+        self.speed = cdata.get("speed")
+        self.gender = cdata.get("gender")
+        self.age = cdata.get("age")
+        self.height = cdata.get("height")
+        self.weight = cdata.get("weight")
+        self.skin = cdata.get("skin")
+        self.eyes = cdata.get("eyes")
+        self.hair = cdata.get("hair")
+        self.character_level = cdata.get("level")
         # dict of class: level (first class must be len 1 list)
-        self.classes = kwargs.get("classes")
+        self.classes = cdata.get("classes")
         # dict of class: subclass
-        self.subclass = kwargs.get("subclass")
+        self.subclass = cdata.get("subclass")
         # holds either rolled health or False to indicate auto-health calc
         self._max_health = kwargs.get("max health")
         self.background = kwargs.get("background")
@@ -308,29 +301,25 @@ class Character:
 
         self.mod_health(-value)
 
-    def ability_check(self, ability, roll, proficiency=False):
-        roll += self.ability_mod(ability)
-        if ability in self.proficiencies:
-            roll += self.proficiency_bonus
-        if ability not in self.proficiencies and proficiency is True:
-            roll += self.proficiency_bonus
+    # def ability_check(self, ability, roll, proficiency=False):
+    #     roll += self.ability_mod(ability)
+    #     if ability in self.proficiencies:
+    #         roll += self.proficiency_bonus
+    #     if ability not in self.proficiencies and proficiency is True:
+    #         roll += self.proficiency_bonus
 
-    def has_tool_proficiency(self, tool):
-        if tool.name in self.proficiencies:
-            return True
-        elif tool.category in self.proficiencies:
-            return True
-        elif tool.type in self.proficiencies:
+    def has_proficiency(self, proficiency):
+        if proficiency in self.proficiencies:
             return True
         else:
             return False
 
-    def tool_check(self, ability, tool, roll, proficiency=False):
-        roll += self.ability_mod(ability)
-        if tool in self.inventory and self.have_tool_proficiency(tool):
-            roll += self.proficiency_bonus
-        if tool not in self.proficiencies and proficiency is True:
-            roll += self.proficiency_bonus
+    # def tool_check(self, ability, tool, roll, proficiency=False):
+    #     roll += self.ability_mod(ability)
+    #     if tool in self.inventory and self.have_tool_proficiency(tool):
+    #         roll += self.proficiency_bonus
+    #     if tool not in self.proficiencies and proficiency is True:
+    #         roll += self.proficiency_bonus
 
     # def weapon_attack_roll(self, weapon, ability='str')
 
