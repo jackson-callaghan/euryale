@@ -31,6 +31,8 @@ class Character:
         # dict of class: subclass
         self.subclass = cdata.get("subclass")
         # holds either rolled health or False to indicate auto-health calc
+
+        #fix kwargs -> cdata etc
         self._max_health = kwargs.get("max health")
         self.background = kwargs.get("background")
         self.religion = kwargs.get("religion")
