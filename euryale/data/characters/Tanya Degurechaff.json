@@ -20,6 +20,8 @@
         "wizard": "evocation"
     },
     "max health": null,
+    "health": 114,
+    "temp health": 0,
     "background": "soldier",
     "religion": "Being X",
     "abilities": {
