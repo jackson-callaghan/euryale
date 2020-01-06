@@ -1,4 +1,5 @@
 {
+    "name": "Tanya Degurechaff",
     "race": "aasimar",
     "subrace": "protection",
     "size": "medium",
@@ -10,52 +11,56 @@
     "skin": "pale",
     "eyes": "blue/gold",
     "hair": "blonde",
-    "level": 14,
+    "level": 16,
+    "starting class": "wizard",
     "classes": {
-        "wizard": [
-            15
-        ]
+        "wizard": 16
     },
     "subclass": {
         "wizard": "evocation"
     },
-    "max health": false,
+    "max health": null,
     "background": "soldier",
     "religion": "Being X",
     "abilities": {
-        "strength": 9,
-        "dexterity": 13,
-        "constitution": 12,
-        "intelligence": 19,
+        "strength": 11,
+        "dexterity": 14,
+        "constitution": 16,
+        "intelligence": 22,
         "wisdom": 13,
-        "charisma": 18
+        "charisma": 20
     },
-    "proficiencies": [
-        "daggers",
-        "darts",
-        "slings",
-        "quarterstaffs",
-        "light crossbows",
-        "poker",
-        "land vehicles",
-        "athletics",
-        "intelligence save",
-        "arcana",
-        "history",
-        "investigation",
-        "wisdom save",
-        "perception",
-        "intimidation",
-        "simple weapons",
-        "light armor"
-    ],
+    "proficiencies": {
+        "daggers": 1,
+        "darts": 1,
+        "slings": 1,
+        "quarterstaffs": 1,
+        "light crossbows": 1,
+        "poker": 1,
+        "land vehicles": 1,
+        "athletics": 1,
+        "intelligence save": 1,
+        "arcana": 1,
+        "history": 1,
+        "investigation": 1,
+        "wisdom save": 1,
+        "perception": 1,
+        "intimidation": 1,
+        "simple weapons": 1,
+        "light armor": 1
+    },
     "languages": [
         "western common",
         "celestial"
     ],
     "max_attuned": 4,
-    "attuned": 4,
-    "spell slots": false,
+    "attuned": {
+        "placeholder1": "placeholder",
+        "placeholder2": "placeholder",
+        "placeholder3": "placeholder",
+        "placeholder4": "placeholder"
+    },
+    "n_attuned": null,
     "feats": {
         "passive": {
             "spell sniper": {},
@@ -396,7 +401,9 @@
         }
     },
     "notes": [],
-    "spells": {
+    "spell slots": null,
+    "max spells prepared": null,
+    "spells known": {
         "0": {
             "light": {},
             "message": {},
@@ -457,6 +464,11 @@
         },
         "7": {
             "plane shift": {}
+        }
+    },
+    "spells prepared": {
+        "1": {
+            "shield": {}
         }
     }
 }

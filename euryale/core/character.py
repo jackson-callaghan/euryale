@@ -5,6 +5,9 @@ Contains the Character class, which manages information storage during runtime.
 
 import json
 import math
+from . import inventory
+from . import magic
+from . import notes
 
 
 class Character:
@@ -12,7 +15,14 @@ class Character:
 
     def __init__(self, cdata):
 
-        # "incalculable" values
+        # load class list for later use (calculations)
+        with open("data/classes.json", "r") as classes_file:
+            self.class_list = json.load(classes_file)
+        with open("data/abilities.json", "r") as ability_map_file:
+            self.ability_map = json.load(ability_map_file)
+
+        # ---- "incalculable" values ----
+
         self.name = cdata.get("name")
         self.race = cdata.get("race")
         self.subrace = cdata.get("subrace")
@@ -26,34 +36,38 @@ class Character:
         self.eyes = cdata.get("eyes")
         self.hair = cdata.get("hair")
         self.character_level = cdata.get("level")
+        self.starting_class = cdata.get("starting class")
         # dict of class: level (first class must be len 1 list)
         self.classes = cdata.get("classes")
         # dict of class: subclass
         self.subclass = cdata.get("subclass")
-        # holds either rolled health or False to indicate auto-health calc
 
-        #fix kwargs -> cdata etc
-        self._max_health = kwargs.get("max health")
-        self.background = kwargs.get("background")
-        self.religion = kwargs.get("religion")
+        # holds either rolled health or None to indicate auto-health calc
+        self._max_health = cdata.get("max health")
+        self.health = cdata.get("health")
+        self.temp_health = 0
+        self.background = cdata.get("background")
+        self.religion = cdata.get("religion")
 
-        self.strength = kwargs.get("abilities").get("strength")
-        self.dexterity = kwargs.get("abilities").get("dexterity")
-        self.constitution = kwargs.get("abilities").get("constitution")
-        self.intelligence = kwargs.get("abilities").get("intelligence")
-        self.wisdom = kwargs.get("abilities").get("wisdom")
-        self.charisma = kwargs.get("abilities").get("charisma")
+        self.abilities = cdata.get("abilities")
+        self.strength = cdata.get("abilities").get("strength")
+        self.dexterity = cdata.get("abilities").get("dexterity")
+        self.constitution = cdata.get("abilities").get("constitution")
+        self.intelligence = cdata.get("abilities").get("intelligence")
+        self.wisdom = cdata.get("abilities").get("wisdom")
+        self.charisma = cdata.get("abilities").get("charisma")
 
-        self.proficiencies = kwargs.get("proficiencies")
-        self.expertise = kwargs.get("expertise")
-        self.languages = kwargs.get("languages")
-        self.feats = kwargs.get("feats")
-        self.inventory = kwargs.get("inventory")
+        self.proficiencies = cdata.get("proficiencies")
+        self.languages = cdata.get("languages")
+        self.feats = cdata.get("feats")
+        self.inventory = cdata.get("inventory")
+        self.max_attuned = cdata.get("max_attuned")
+        self.attuned = cdata.get("attuned")
+        self.notes = cdata.get("notes")
+        self.spells_known = cdata.get("spells known")
+        self._spells_prepared = cdata.get("spells prepared")
+        self._spell_slots = cdata.get("spell slots")
 
-        with open("../data/classes.json", "r") as classes_file:
-            self.class_list = json.load(classes_file)
-
-        # basic calculable values which should be updated manually
         self.dice = {
             "2": [i for i in range(1, 3)],
             "4": [i for i in range(1, 5)],
@@ -62,11 +76,37 @@ class Character:
             "10": [i for i in range(1, 11)],
             "12": [i for i in range(1, 13)],
             "20": [i for i in range(1, 21)],
-            "101": [i for i in range(1, 101)]
+            "100": [i for i in range(1, 101)]
         }
-        self.hit_dice = self.max_hit_dice
-        self.health = self.max_health
-        self.temp_health = 0
+
+    def __str__(self):
+        line1 = "{}: {} {} {}. {}. \n".format(
+            self.name,
+            self.size,
+            self.subrace,
+            self.race,
+            self.gender
+        )
+        line2 = ", ".join(
+            ["level {} {} {}".format(
+                self.classes[i],
+                self.subclass[i],
+                i
+            )
+                for i in self.classes.keys()],
+
+        )
+
+        line3 = "\n".join((
+            str(self.strength),
+            str(self.dexterity),
+            str(self.constitution),
+            str(self.intelligence),
+            str(self.wisdom),
+            str(self.charisma)
+        ))
+
+        return "\n".join((line1, line2, line3))
 
     @property
     def max_hit_dice(self):
@@ -78,7 +118,8 @@ class Character:
         """
         max_hit_dice = {}
         for class_, level in self.classes.items():
-            max_hit_dice[str(self.class_list[class_]["hit die"])] = level
+            # diepair: 0: hitdie value, 1: number of hitdie from class levels
+            max_hit_dice[class_] = (self.class_list[class_]["hit die"], level)
         return max_hit_dice
 
     @property
@@ -89,16 +130,20 @@ class Character:
             int: Max health
 
         """
-        if self._max_health is not False:
+        if self._max_health is not None:
             return self._max_health
         else:
             total = 0
-            for die, lvl in self.max_hit_dice.items():
-                total += (((int(die) / 2)+1) + self.constitution_mod) * lvl
-                # apparently trying to multiply sequence and float?
-            for class_, lvl in self.classes.items():
-                if isinstance(lvl, list):
-                    total += (int(self.class_list[class_]["hit die"]) / 2) - 1
+            for class_, diepair in self.max_hit_dice.items():
+                # diepair: 0: hitdie value, 1: number of hitdie
+                if class_ == self.starting_class:
+                    total += diepair[0] + self.constitution_mod
+                    total += ((diepair[0] / 2) + 1 +
+                              self.constitution_mod) * (diepair[1] - 1)
+                else:
+                    total += (diepair[0] / 2) + 1 + \
+                        self.constitution_mod * diepair[1]
+
             return total
 
     @max_health.setter
@@ -188,8 +233,26 @@ class Character:
         return mod
 
     @property
+    def n_attuned(self):
+
+        return len(self.attuned)
+
+    @property
     def inventory_names(self):
-        return [i.name for i in self.inventory]
+
+        return [i for i in self.inventory.keys()]
+
+    @property
+    def spells_prepared(self):
+        if "0" in self._spells_prepared.keys():
+            return self._spells_prepared
+        else:
+            self._spells_prepared["0"] = self.spells_known["0"]
+            return self._spells_prepared
+
+    @spells_prepared.setter
+    def spells_prepared(self, value):
+        self._spells_prepared = value
 
     def update_classes(self, **kwargs):
         """Replace current classes and levels.
@@ -199,36 +262,21 @@ class Character:
 
         """
         self.classes = {}
-        for c, l in kwargs.items():
-            if c not in self.class_list.keys():
+        for class_, lvl in kwargs.items():
+            if class_ not in self.class_list.keys():
                 raise ValueError("class does not exist")
-            if isinstance(self.classes[c], list):
-                self.classes[c][0] = l
+            if isinstance(self.classes[class_], list):
+                self.classes[class_][0] = lvl
             else:
-                self.classes[c] = l
+                self.classes[class_] = lvl
         # TODO add update calls for everything that is updated based on class
         """things to update:
         - idk yet
         """
 
-    # def modify(self, value, modifiers):
-    #     for modifier in modifiers:
-    #         if modifier["type"] == "flat_delta":
-    #             value += modifier["delta"]
-    #         elif modifier["type"] == "multiplier":
-    #             value *= modifier["delta"]
-    #         elif modifier["type"] == "divider":
-    #             value /= modifier["delta"]
-    #         elif modifier["type"] == "dice_delta":
-    #             reg = re.compile("(d)")
-    #             delta = re.split(reg, modifier["delta"])
-    #             if delta[0][0] == "-":
-    #                 for i in range(int(delta[0][1:])):
-    #                     value -= random.choice(self.dice[delta[2]])
-    #             else:
-    #                 for i in range(int(delta[0])):
-    #                     value += random.choice(self.dice[delta[2]])
-    #     return value
+    @property
+    def is_multiclassed(self):
+        return True if len(self.classes) > 1 else False
 
     def level_up(self, clas):
         """Level up a given class.
@@ -288,60 +336,62 @@ class Character:
         Args:
             value (int): amount to healh.
 
+        Returns:
+            int: amount healed.
+
         """
         self.mod_health(value)
 
-    def take_damage(self, value, type_):
-        for feat in self.feats:
-            if feat["category"] == "passive":
-                if (feat["type"] == "vulnerability"
-                        and feat["modifies"] == type_):
-                    value *= 2
-                if (feat["type"] == "resistance"
-                        and feat["modifies"] == type_):
-                    value /= 2
+        return value
+
+    def take_damage(self, value, dtype=None):
+        """Take a given amount of damage.
+        Takes into account resistance and vulnerability if given type.
+
+        Args:
+            value (int): Amount of damage
+            type_ (str): Type of damage. Defaults to None.
+
+        Returns:
+            int: Final damage taken.
+
+        """
+        if dtype is not None:
+            for feat in self.feats:
+                if feat["category"] == "passive":
+                    # TODO change modifies accessor to proper structure
+                    if (feat["type"] == "vulnerability"
+                            and feat["modifies"] == dtype):
+                        value = math.floor(value * 2)
+                    if (feat["type"] == "resistance"
+                            and feat["modifies"] == dtype):
+                        value = math.floor(value / 2)
 
         self.mod_health(-value)
 
-    # def ability_check(self, ability, roll, proficiency=False):
-    #     roll += self.ability_mod(ability)
-    #     if ability in self.proficiencies:
-    #         roll += self.proficiency_bonus
-    #     if ability not in self.proficiencies and proficiency is True:
-    #         roll += self.proficiency_bonus
+        return value
 
     def has_proficiency(self, proficiency):
-        if proficiency in self.proficiencies:
-            return True
+        """Check if character has a proficiency.
+
+        Args:
+            proficiency (str): name of a proficiency
+
+        Returns:
+            int: proficiency level (1 for proficiency, 2 for expertise) or 0
+        """
+        if proficiency in self.proficiencies.keys():
+            return self.proficiencies[proficiency]
         else:
-            return False
+            return 0
 
-    # def tool_check(self, ability, tool, roll, proficiency=False):
-    #     roll += self.ability_mod(ability)
-    #     if tool in self.inventory and self.have_tool_proficiency(tool):
-    #         roll += self.proficiency_bonus
-    #     if tool not in self.proficiencies and proficiency is True:
-    #         roll += self.proficiency_bonus
-
-    # def weapon_attack_roll(self, weapon, ability='str')
-
-    # Ignore literally all of this for now. Only work on displaying info.
-
-    # TODO inventory search, add, remove
-    # TODO attacks using skill check (handle dex vs str attacks)
-        # has to check all feats for modifying attack rolls
-        # takes arguments for weapon (check if weapon modifies)
-        # as well as skill, melee or ranged, etc etc
-    # TODO add max spell slots property and spell slots variable
-
-    """TODO spellcasting system
-
-    depends on a lot of things, so, steps:
-    - make structure for spell in spells json
-    - make character known spells based on this
-        - add tag that determines which class has that spell for calc
-    - spellcasting method takes spell and level to cast at, option to roll dmg
-        - auto update available spell slots, raise exception if can't cast
-    """
-
-    # TODO implement basically all number usage using xdice
+# TODO make own files for inventory, spells, feats, notes
+    # classes to manage each, so access would be like char.inventory.add
+    # and suchlike
+# TODO add attributes and properties to access all information in class json
+    # spell slots
+    # max spells prepared
+# TODO figure out proper (prefereable extensible) format for feats/inventory
+    # flags with program-handled defaults? for instance attunement flag, which
+    # defaults to False if it's not found
+# TODO docstring everything and reformat to be easier to read
