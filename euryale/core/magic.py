@@ -1,6 +1,11 @@
-class Magic():
+# TODO create spell class
+# TODO expand magic to cover ki and other such resources (maybe?)
+# TODO create methods for adding and removing spells prepared more easily
 
-    def __init__(self, registry, cdata):
+
+class Magic:
+
+    def __init__(self, cdata):
         self.spells_known = cdata.get("spells known")
         self._spells_prepared = cdata.get("spells prepared")
         self._spell_slots = cdata.get("spell slots")

@@ -56,12 +56,6 @@
         "celestial"
     ],
     "max_attuned": 4,
-    "attuned": {
-        "placeholder1": "placeholder",
-        "placeholder2": "placeholder",
-        "placeholder3": "placeholder",
-        "placeholder4": "placeholder"
-    },
     "n_attuned": null,
     "feats": {
         "passive": {

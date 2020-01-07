@@ -8,11 +8,10 @@ the character.
 
 import json
 import math
-from . import abilities as ab
-# from . import feats as ft
-# from . import inventory as iv
-# from . import magic as mg
-# from . import notes as nt
+from core import abilities as ab
+from core import feats as ft
+from core import inventory as iv
+from core import magic as mg
 
 
 class Character:
@@ -34,6 +33,12 @@ class Character:
             self.class_list = json.load(classes_file)
         with open("data/abilities.json", "r") as ability_map_file:
             self.ability_map = json.load(ability_map_file)
+
+        # ---- Info stored in special classes ----
+        self.abilities = ab.Abilities(cdata)
+        self.feats = ft.Feats(cdata)
+        self.inventory = iv.Inventory(cdata)
+        self.magic = mg.Magic(cdata)
 
         # ---- characteristics ----
         self.name = cdata.get("name", "Simpleton")
@@ -67,20 +72,13 @@ class Character:
         # ---- some more information ----
         # holds either rolled health or None to indicate auto-health calc
         self._max_health = cdata.get("max health", None)
-        self.health = cdata.get("health", self.max_health())
+        self.health = cdata.get("health", self.max_health)
         self.temp_health = cdata.get("temp health", 0)
         self.background = cdata.get("background", None)
         self.religion = cdata.get("religion", None)
         # dict of proficiency: level (1 for proficient, 2 for expertise)
         self.proficiencies = cdata.get("proficiencies", {})
         self.languages = cdata.get("languages", [])
-
-        # ---- Info stored in special classes ----
-        self.abilities = ab.Abilities(cdata.get("abilities"))
-        # self.feats = ft.Feats(cdata.get("feats"))
-        # self.inventory = iv.Inventory(cdata.get("inventory"))
-        # self.magic = mg.Magic(cdata)
-        # self.notes = nt.Notes(cdata.get("notes"))
 
     def __str__(self):
         """Return string format of character sheet.
@@ -277,16 +275,16 @@ class Character:
             int: Final damage taken.
 
         """
-        if dtype is not None:
-            for feat in self.feats:
-                if feat["category"] == "passive":
-                    # TODO change modifies accessor to proper structure
-                    if (feat["type"] == "vulnerability"
-                            and feat["modifies"] == dtype):
-                        value = math.floor(value * 2)
-                    if (feat["type"] == "resistance"
-                            and feat["modifies"] == dtype):
-                        value = math.floor(value / 2)
+        # if dtype is not None:
+        #     for feat in self.feats:
+        #         if feat["category"] == "passive":
+        #             # TODO change modifies accessor to proper structure
+        #             if (feat["type"] == "vulnerability"
+        #                     and feat["modifies"] == dtype):
+        #                 value = math.floor(value * 2)
+        #             if (feat["type"] == "resistance"
+        #                     and feat["modifies"] == dtype):
+        #                 value = math.floor(value / 2)
 
         self.mod_health(-value)
 

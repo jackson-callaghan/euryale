@@ -7,7 +7,7 @@ own name.
 """
 
 
-class Registry():
+class Registry:
     """Registry Class.
 
     Mostly holds methods for registry editing.
