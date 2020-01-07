@@ -42,7 +42,7 @@ def standardtest():
                         style='dash2heavy',
                         points=[(0, 0), (4, 4), (4, 0), (2, 4)])
     myc.composite()
-    tbox = myc.maketbox('tbox', (8, 3), (5, 50), wrap=True,
+    tbox = myc.maketbox('tbox', pos=(8, 3), size=(5, 50), wrap=True,
                         border=Style.SINGLEHEAVY,
                         overlay=False, fg='yellow',
                         text="Quis ea nulla quis reprehenderit sint fugiat \
@@ -61,7 +61,9 @@ def standardtest():
                        dchar=' ',
                        bg='white')
     myc.composite()
-
+    newtbox = myc.maketbox('smalltest', pos=(17, 17), size=(1, 30), overlay=True,
+                           text="Short box test")
+    myc.composite()
 
     time.sleep(5)
 
