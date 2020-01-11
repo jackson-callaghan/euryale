@@ -125,10 +125,10 @@ class Compositor:
                         self.objectlist.index(target) - 1, obj)
 
     def removeobject(self, objname=None):
-        """Remove box by name.
+        """Remove object by reference.
 
         Args:
-            objname (str, optional): Name of box to remove. Defaults to None.
+            objname (str): Name of box to remove. Defaults to None.
 
         Returns:
             bool: False if nothing was removed, or True if something was.
@@ -136,10 +136,10 @@ class Compositor:
         """
         if objname is None:
             return False
-        if objname not in [i.name for i in self.objectlist]:
+        if objname not in self.objectlist:
             return False  # instead of error because it's technically not there
         else:
-            self.objectlist = [i for i in self.objectlist if i.name != objname]
+            self.objectlist.remove(objname)
             return True
 
     def makebox(

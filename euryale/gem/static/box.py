@@ -174,22 +174,23 @@ class Box:
             elif self.ytalign == "top":
                 y = ty
             elif self.ytalign == "itop":
-                y = ty + 1
+                y = ty + (1 if h > 2 else 0)
             elif self.ytalign == "center":
                 y = ty + math.floor(th / 2)
             elif self.ytalign == "ibottom":
-                y = ty + th - 1
+                y = ty + th - (2 if h > 2 else 1)
             elif self.ytalign == "bottom":
-                y = ty + th
+                y = ty + th - 1
             elif self.ytalign == "obottom":
-                y = ty + th + 1
+                y = ty + th
 
             if self.ysalign == "above":
-                y -= h
+                y -= h if (th % 2 != 0 or self.ytalign != "center") else h + 1
             elif self.ysalign == "bottom":
-                y -= (h - 1)
+                y -= (h - 1) if (th %
+                                 2 != 0 or self.ytalign != "center") else h
             elif self.ysalign == "center":
-                y -= math.floor(h / 2)
+                y -= math.floor(h / 2) - (1 if "bottom" in self.ytalign else 0)
             elif self.ysalign == "top":
                 y = y  # change nothing
             elif self.ysalign == "below":
@@ -205,22 +206,23 @@ class Box:
             elif self.xtalign == "left":
                 x = tx
             elif self.xtalign == "ileft":
-                x = tx + 1
+                x = tx + (1 if w > 2 else 0)
             elif self.xtalign == "center":
                 x = tx + math.floor(tw / 2)
             elif self.xtalign == "iright":
-                x = tx + tw - 1
+                x = tx + tw - (2 if w > 2 else 1)
             elif self.xtalign == "right":
-                x = tx + tw
+                x = tx + tw - 1
             elif self.xtalign == "oright":
-                x = tx + tw + 1
+                x = tx + tw
 
             if self.xsalign == "oright":
-                x -= w
+                x -= w if (tw % 2 != 0 or self.xtalign != "center") else w + 1
             elif self.xsalign == "aright":
-                x -= (w - 1)
+                x -= (w - 1) if (tw %
+                                 2 != 0 or self.xtalign != "center") else w
             elif self.xsalign == "center":
-                x -= math.floor(w / 2)
+                x -= math.floor(w / 2) - (1 if "right" in self.xtalign else 0)
             elif self.xsalign == "aleft":
                 x = x  # change nothing
             elif self.xsalign == "oleft":
