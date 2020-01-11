@@ -125,8 +125,9 @@ class TBox(DBox):
             str: New border style.
 
         """
-        if border is not False and (border not in self.styles.keys() and
-                                    border not in self.styles.values()):
+        if border is not False and (
+                border not in self.styles.keys()
+                and border not in self.styles.values()):
             raise ValueError('argument is not valid border style')
 
         self.border = border

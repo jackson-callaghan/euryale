@@ -143,8 +143,9 @@ class Character:
                 # diepair: 0: hitdie value, 1: number of hitdie
                 if class_ == self.starting_class:
                     total += diepair[0] + self.abilities.con_mod
-                    total += ((diepair[0] / 2) + 1 +
-                              self.abilities.con_mod) * (diepair[1] - 1)
+                    total += (
+                        (diepair[0] / 2) + 1
+                        + self.abilities.con_mod) * (diepair[1] - 1)
                 else:
                     total += (diepair[0] / 2) + 1 + \
                         self.abilities.con_mod * diepair[1]
