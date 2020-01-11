@@ -4,7 +4,7 @@ Allows definition of points which are used to dynamically draw a box using
 box drawing characters of customizable style. Allows for splits, etc.
 
 """
-from box import Box
+from .box import Box
 
 
 class DBox(Box):
@@ -44,24 +44,24 @@ class DBox(Box):
             self.points = [p for p in points]
 
         self.styles = {
-            'default'    : "─│┌┐└┘├┤┬┴┼",
+            'default': "─│┌┐└┘├┤┬┴┼",
             'singlelight': "─│┌┐└┘├┤┬┴┼",
             'singleround': "─│╭╮╰╯├┤┬┴┼",
             'singleheavy': "━┃┏┓┗┛┣┫┳┻╋",
-            'double'     : "═║╔╗╚╝╠╣╦╩╬",
-            'dash2light' : "╌╎┌┐└┘├┤┬┴┼",
-            'dash2heavy' : "╍╏┏┓┗┛┣┫┳┻╋",
-            'dash3light' : "┄┆┌┐└┘├┤┬┴┼",
-            'dash3heavy' : "┅┇┏┓┗┛┣┫┳┻╋",
-            'dash4light' : "┈┊┌┐└┘├┤┬┴┼",
-            'dash4heavy' : "┉┋┏┓┗┛┣┫┳┻╋",
-            'dash2round' : "╌╎╭╮╰╯├┤┬┴┼",
-            'dash3round' : "┄┆╭╮╰╯├┤┬┴┼",
-            'dash4round' : "┈┊╭╮╰╯├┤┬┴┼",
+            'double': "═║╔╗╚╝╠╣╦╩╬",
+            'dash2light': "╌╎┌┐└┘├┤┬┴┼",
+            'dash2heavy': "╍╏┏┓┗┛┣┫┳┻╋",
+            'dash3light': "┄┆┌┐└┘├┤┬┴┼",
+            'dash3heavy': "┅┇┏┓┗┛┣┫┳┻╋",
+            'dash4light': "┈┊┌┐└┘├┤┬┴┼",
+            'dash4heavy': "┉┋┏┓┗┛┣┫┳┻╋",
+            'dash2round': "╌╎╭╮╰╯├┤┬┴┼",
+            'dash3round': "┄┆╭╮╰╯├┤┬┴┼",
+            'dash4round': "┈┊╭╮╰╯├┤┬┴┼",
             'blockshadel': "░░░░░░░░░░░",
             'blockshadem': "▒▒▒▒▒▒▒▒▒▒▒",
             'blockshaded': "▓▓▓▓▓▓▓▓▓▓▓",
-            'fullblock'  : "███████████"
+            'fullblock': "███████████"
         }
 
         self.style = self.styles['default']
@@ -252,7 +252,7 @@ class DBox(Box):
         if bg is None:
             bg = self.bg
 
-        self.setpos(pos)
+        self.pos = pos
         self.setstyle(style, True)
         self.setfg(fg, True)
         self.setbg(bg, True)

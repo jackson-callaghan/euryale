@@ -1,7 +1,6 @@
 """Test static."""
 
-import static
-from static import Compositor, Fore, Back, Style
+from static import Compositor, Fore, Back, Style, Chars
 import time
 
 
@@ -43,18 +42,23 @@ def standardtest():
                         points=[(0, 0), (4, 4), (4, 0), (2, 4)])
     myc.composite()
     tbox = myc.maketbox('tbox', pos=(8, 3), size=(5, 50), wrap=True,
-                        border=Style.SINGLEHEAVY,
-                        overlay=False, fg='yellow',
+                        overlay=True, fg='yellow', justify="center",
                         text="Quis ea nulla quis reprehenderit sint fugiat \
     esse sit consectetur. Consectetur sint sunt adipisicing ipsum enim cupidat\
     est.Culpa laborum voluptate commodo incididunt et. ")
 
+    myc.composite()
+    surround = myc.makebox('surround', size=(5, 50),
+                           dchar=Chars.BLOCK_MEDIUM, height="bottom")
+    surround.ytarget = tbox
+    surround.xtarget = tbox
     myc.composite()
     tbox.settext("""Quis ea nulla quis reprehenderit sint fu
     esse sit consectetur. Consectetur sint sunt adipisicing ipsum enim cupidata
     est.Culpa laborum voluptate commodo incididunt et. """)
     myc.composite()
     tbox.setstyle(Style.BLOCKSHADEM)
+    tbox.pos = (15, 35)
     cbox = myc.makebox('colorbox',
                        pos=(5, 5),
                        size=(5, 5),

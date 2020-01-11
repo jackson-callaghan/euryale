@@ -6,7 +6,7 @@ outline.
 """
 
 import textwrap
-from dbox import DBox
+from .dbox import DBox
 
 
 class TBox(DBox):
@@ -36,6 +36,7 @@ class TBox(DBox):
                 Defaults to False.
             **fg (str): Foreground Color key. Defaults to 'default'.
             **bg (str): Background Color key. Defaults to 'default'.
+            **justify (str): Text justification. Defaults to None.
 
         Raises:
             TypeError: If strip_newlines is not bool.
@@ -49,6 +50,7 @@ class TBox(DBox):
         overlay = kwargs.get('overlay', False)
         fg = kwargs.get('fg', 'default')
         bg = kwargs.get('bg', 'default')
+        justify = kwargs.get('justify', None)
         # check arguments are valid
         if not isinstance(strip_newlines, bool):
             raise TypeError("strip_newlines is not bool")
@@ -59,6 +61,7 @@ class TBox(DBox):
 
         self.text = text
         self.wrap = wrap
+        self.justify = justify
         self.strip_newlines = strip_newlines
 
         self.setborder(border)
@@ -108,8 +111,8 @@ class TBox(DBox):
             str: New border style.
 
         """
-        if border is not False and (border not in self.styles.keys()
-                                    and border not in self.styles.values()):
+        if border is not False and (border not in self.styles.keys() and
+                                    border not in self.styles.values()):
             raise ValueError('argument is not valid border style')
 
         self.border = border
@@ -148,11 +151,24 @@ class TBox(DBox):
                 wrapper = textwrap.TextWrapper(width=self.size[1] - 2)
                 wrapped = wrapper.wrap(text)
             else:
-                wrapper = textwrap.TextWrapper(width=self.size[1] - 2)
+                # changed this from -2 because it didn't seem necessary
+                # justify below also follows changed state
+                wrapper = textwrap.TextWrapper(width=self.size[1])
                 wrapped = wrapper.wrap(text)
 
         else:
             wrapped = [text]
+
+        # new, justify text
+        if self.justify is not None:
+            delta = 2 if self.border is not False else 0
+            if self.justify == "left":
+                wrapped = map(lambda s: s.ljust(self.size[1] - delta), wrapped)
+            elif self.justify == "right":
+                wrapped = map(lambda s: s.rjust(self.size[1] - delta), wrapped)
+            elif self.justify == "center":
+                wrapped = map(lambda s: s.center(
+                    self.size[1] - delta), wrapped)
 
         for y, line in enumerate(wrapped):
             for x, c in enumerate(line):

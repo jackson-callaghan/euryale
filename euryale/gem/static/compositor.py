@@ -7,8 +7,8 @@ the most bare-bones system, really used as the skeleton for Dynamic Compositor
 TODO: parent assignment
 TODO: parent-based alignment
 TODO: alignment against target
-TODO: Text justification
 TODO: Box justification
+TODO: replace all getter/setter functions with properties
 
 TODO: expand Chars list
 TODO: diagonal corners for DBox
@@ -19,10 +19,10 @@ TODO: ETBox: edge-defined TBox
 
 import os
 import sys
-from segment import Segment
-from box import Box
-from dbox import DBox
-from tbox import TBox
+from .segment import Segment
+from .box import Box
+from .dbox import DBox
+from .tbox import TBox
 
 from colorama import init as fgama_init  # used to support ANSI in windows cmd
 
@@ -238,6 +238,7 @@ class Compositor:
                  overlay=False,
                  text='',
                  wrap=False,
+                 justify=None,
                  border=False,
                  height='top'):
         """Make a new TBox and add to compositor.
@@ -278,6 +279,7 @@ class Compositor:
                    bg=bg,
                    text=text,
                    wrap=wrap,
+                   justify=justify,
                    border=border,
                    overlay=overlay)
 

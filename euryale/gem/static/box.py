@@ -5,7 +5,8 @@ attributes and methods for storing and rendering a simple box with a few
 fancy bits.
 
 """
-from segment import Segment
+from .segment import Segment
+import math
 
 
 class Box:
@@ -30,6 +31,15 @@ class Box:
                 defining a premade box fill.
             **overlay (bool): Show boxes below through blank chars. Defaults to
                 False.
+            **ytarget (Box): vertical alignment target (can be compositor).
+                Defaults to None.
+            **ytalign (str): type of alignment to target vertically
+            **ysalign (str): type of alignment to self vertically
+            **xtarget (Box) horizontal alignment target (can be compositor).
+                Defaults to None.
+            **xtalign (str): type of alignment to target horizontally
+            **xsalign (str): type of alignment to self horizontally
+
 
         Raises:
             TypeError: If pos is not tuple.
@@ -40,31 +50,63 @@ class Box:
 
         """
         self.fgs = {
-            'black'  : "30",
-            'red'    : "31",
-            'green'  : "32",
-            'yellow' : "33",
-            'blue'   : "34",
+            'black': "30",
+            'red': "31",
+            'green': "32",
+            'yellow': "33",
+            'blue': "34",
             'magenta': "35",
-            'cyan'   : "36",
-            'white'  : "37",
+            'cyan': "36",
+            'white': "37",
 
-            'reset'  : "0",
+            'reset': "0",
             'default': "37"
         }
         self.bgs = {
-            'black'  : "40",
-            'red'    : "41",
-            'green'  : "42",
-            'yellow' : "43",
-            'blue'   : "44",
+            'black': "40",
+            'red': "41",
+            'green': "42",
+            'yellow': "43",
+            'blue': "44",
             'magenta': "45",
-            'cyan'   : "46",
-            'white'  : "47",
+            'cyan': "46",
+            'white': "47",
 
-            'reset'  : "0",
+            'reset': "0",
             'default': "40"
         }
+        self.ytalign_possible = [
+            "otop",
+            "obottom",
+            "top",
+            "bottom",
+            "itop",
+            "ibottom",
+            "center"
+        ]
+        self.ysalign_possible = [
+            "above",
+            "below",
+            "top",
+            "bottom",
+            "center"
+        ]
+        self.xtalign_possible = [
+            "left",
+            "right",
+            "oleft",
+            "oright",
+            "ileft",
+            "iright",
+            "center"
+        ]
+        self.xsalign_possible = [
+            "oleft",
+            "aleft",
+            "oright",
+            "aright",
+            "center"
+        ]
 
         dchar = kwargs.get('dchar', ' ')
         splash = kwargs.get('splash', None)
@@ -85,7 +127,13 @@ class Box:
         if len(size) < 2:
             raise ValueError('size: too few coordinates given')
 
-        self.pos = pos
+        self._pos = pos
+        self.ytarget = kwargs.get("ytarget", None)
+        self.ytalign = kwargs.get("ytalign", "center")
+        self.ysalign = kwargs.get("ysalign", "center")
+        self.xtarget = kwargs.get("xtarget", None)
+        self.xtalign = kwargs.get("xtalign", "center")
+        self.xsalign = kwargs.get("xsalign", "center")
         self.size = size
         self.dchar = dchar
         self.parent = parent  # might be useful for some things
@@ -93,6 +141,8 @@ class Box:
         self.overlay = overlay  # overlay is handled by compositor
 
         self.populate()
+
+        # TODO error checking for alignment and such
 
         if splash is not None:
             if len(splash) != size[0] or len(splash[0]) != size[1]:
@@ -108,6 +158,86 @@ class Box:
                      char=self.dchar,
                      fg=self.fg,
                      bg=self.bg)
+
+    @property
+    def pos(self):
+        y = 0
+        x = 0
+        # here comes the worst cluster of elif statements ever
+        if self.ytarget is not None:
+            h = self.size[0]
+            ty = self.ytarget.pos[0]
+            th = self.ytarget.size[0]
+
+            if self.ytalign == "otop":
+                y = ty - 1
+            elif self.ytalign == "top":
+                y = ty
+            elif self.ytalign == "itop":
+                y = ty + 1
+            elif self.ytalign == "center":
+                y = ty + math.floor(th / 2)
+            elif self.ytalign == "ibottom":
+                y = ty + th - 1
+            elif self.ytalign == "bottom":
+                y = ty + th
+            elif self.ytalign == "obottom":
+                y = ty + th + 1
+
+            if self.ysalign == "above":
+                y -= h
+            elif self.ysalign == "bottom":
+                y -= (h - 1)
+            elif self.ysalign == "center":
+                y -= math.floor(h / 2)
+            elif self.ysalign == "top":
+                y = y  # change nothing
+            elif self.ysalign == "below":
+                y += 1
+
+        if self.xtarget is not None:
+            w = self.size[1]
+            tx = self.xtarget.pos[1]
+            tw = self.xtarget.size[1]
+
+            if self.xtalign == "oleft":
+                x = tx - 1
+            elif self.xtalign == "left":
+                x = tx
+            elif self.xtalign == "ileft":
+                x = tx + 1
+            elif self.xtalign == "center":
+                x = tx + math.floor(tw / 2)
+            elif self.xtalign == "iright":
+                x = tx + tw - 1
+            elif self.xtalign == "right":
+                x = tx + tw
+            elif self.xtalign == "oright":
+                x = tx + tw + 1
+
+            if self.xsalign == "oright":
+                x -= w
+            elif self.xsalign == "aright":
+                x -= (w - 1)
+            elif self.xsalign == "center":
+                x -= math.floor(w / 2)
+            elif self.xsalign == "aleft":
+                x = x  # change nothing
+            elif self.xsalign == "oleft":
+                x += 1
+
+        y += self._pos[0]
+        x += self._pos[1]
+
+        return (y, x)
+
+    @pos.setter
+    def pos(self, pos):
+        if not isinstance(pos, tuple):
+            raise TypeError('argument is not tuple')
+        if len(pos) < 2:
+            raise ValueError('too few coordinates given')
+        self._pos = pos
 
     def populate(self):
         """Populate grid with default character segments.
@@ -198,29 +328,6 @@ class Box:
                     self.setsegment((y, x), char)
 
         return self.grid
-
-    def setpos(self, pos=(0, 0)):
-        """Set new position for box.
-
-        Args:
-            pos (tuple, optional): (y, x) coordinates. Defaults to (0, 0).
-
-        Raises:
-            TypeError: If pos is not tuple.
-            ValueError: If pos does not contain 2 (y, x) coordinates.
-
-        Returns:
-            tuple: New position.
-
-        """
-        if not isinstance(pos, tuple):
-            raise TypeError('argument is not tuple')
-        if len(pos) < 2:
-            raise ValueError('too few coordinates given')
-
-        self.pos = pos
-
-        return self.pos
 
     def setarea(self, c1=(0, 0), c2=(0, 0), char=None, **kwargs):
         """Replace an area of the box with a given character.
