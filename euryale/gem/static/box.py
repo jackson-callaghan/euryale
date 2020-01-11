@@ -14,7 +14,8 @@ class Box:
 
     Mostly used as a base class to inherit for more complex boxtypes. Contains
     attributes and methods for storing and rendering a simple box with a few
-    fancy bits.
+    fancy bits. Doesn't support colors from initialization, but they can be set
+    after through internal methods.
 
     """
 
@@ -49,32 +50,6 @@ class Box:
             ValueError: If splash does not fit size of box.
 
         """
-        self.fgs = {
-            'black': "30",
-            'red': "31",
-            'green': "32",
-            'yellow': "33",
-            'blue': "34",
-            'magenta': "35",
-            'cyan': "36",
-            'white': "37",
-
-            'reset': "0",
-            'default': "37"
-        }
-        self.bgs = {
-            'black': "40",
-            'red': "41",
-            'green': "42",
-            'yellow': "43",
-            'blue': "44",
-            'magenta': "45",
-            'cyan': "46",
-            'white': "47",
-
-            'reset': "0",
-            'default': "40"
-        }
         self.ytalign_possible = [
             "otop",
             "obottom",
@@ -111,8 +86,6 @@ class Box:
         dchar = kwargs.get('dchar', ' ')
         splash = kwargs.get('splash', None)
         overlay = kwargs.get('overlay', False)
-        fg = kwargs.get('fg', 'default')
-        bg = kwargs.get('bg', 'default')
 
         self.segments = []
         self.grid = []
@@ -150,17 +123,18 @@ class Box:
             else:
                 self.from_splash(splash)
 
-        self.fg = self.fgs[fg]
-        self.bg = self.bgs[bg]
-
         self.setarea(c1=(0, 0),
                      c2=(self.size[0], self.size[1]),
-                     char=self.dchar,
-                     fg=self.fg,
-                     bg=self.bg)
+                     char=self.dchar)
 
     @property
     def pos(self):
+        """Get position based on set position and/or alignment targets.
+
+        Returns:
+            tuple: (y, x) coordinates.
+
+        """
         y = 0
         x = 0
         # here comes the worst cluster of elif statements ever
@@ -228,6 +202,7 @@ class Box:
             elif self.xsalign == "oleft":
                 x += 1
 
+        # position is either returned or used as offset for alignment
         y += self._pos[0]
         x += self._pos[1]
 

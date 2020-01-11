@@ -29,19 +29,43 @@ class DBox(Box):
             **style (str): Style key for box drawing characters.
             **fg (str): Foreground Color key. Defaults to 'default'.
             **bg (str): Background Color key. Defaults to 'default'.
+            **defaultpoints (bool): Set points in corners. Defaults to 'False'.
+            **ytarget (Box): vertical alignment target (can be compositor).
+                Defaults to None.
+            **ytalign (str): type of alignment to target vertically
+            **ysalign (str): type of alignment to self vertically
+            **xtarget (Box) horizontal alignment target (can be compositor).
+                Defaults to None.
+            **xtalign (str): type of alignment to target horizontally
+            **xsalign (str): type of alignment to self horizontally
 
         """
-        overlay = kwargs.get('overlay', False)
-        points = kwargs.get('points', None)
-        style = kwargs.get('style', 'default')
-        fg = kwargs.get('fg', 'default')
-        bg = kwargs.get('bg', 'default')
+        self.fgs = {
+            'black': "30",
+            'red': "31",
+            'green': "32",
+            'yellow': "33",
+            'blue': "34",
+            'magenta': "35",
+            'cyan': "36",
+            'white': "37",
 
-        super().__init__(parent, name, pos, size, overlay=overlay)
-        if points is None:
-            self.points = []
-        else:
-            self.points = [p for p in points]
+            'reset': "0",
+            'default': "37"
+        }
+        self.bgs = {
+            'black': "40",
+            'red': "41",
+            'green': "42",
+            'yellow': "43",
+            'blue': "44",
+            'magenta': "45",
+            'cyan': "46",
+            'white': "47",
+
+            'reset': "0",
+            'default': "40"
+        }
 
         self.styles = {
             'default': "─│┌┐└┘├┤┬┴┼",
@@ -64,22 +88,113 @@ class DBox(Box):
             'fullblock': "███████████"
         }
 
-        self.style = self.styles['default']
-        self.fg = self.fgs['default']
-        self.bg = self.bgs['default']
-        self.setstyle(style, True)
-        self.setfg(fg, True)
-        self.setbg(bg, True)
+        overlay = kwargs.get('overlay', False)
+        points = kwargs.get('points', None)
+        style = kwargs.get('style', 'default')
+
+        super().__init__(
+            parent,
+            name,
+            pos=pos,
+            size=size,
+            overlay=overlay)
+
+        if points is None:
+            self.points = []
+        else:
+            self.points = [p for p in points]
+
+        self._style = self.styles['default']
+        self.style = (style, True)
+
+        fg = kwargs.get('fg', 'default')
+        bg = kwargs.get('bg', 'default')
+        self.fg = (fg, True)
+        self.bg = (bg, True)
+        defaultpoints = kwargs.get('defaultpoints', False)
+
+        if defaultpoints:
+            self.addpoints(
+                (0, 0),
+                (self.size[0] - 1, 0),
+                (0, self.size[1] - 1),
+                (self.size[0] - 1, self.size[1] - 1))
 
         if len(self.points) > 0:
             self.update()
 
-    def addpoint(self, pos=(0, 0), s=False):
+    @property
+    def fg(self):
+        """Get the foreground color. Set the foreground color by name or value.
+
+        Returns:
+            str: the current foreground color code.
+
+        """
+        return self._fg
+
+    @fg.setter
+    def fg(self, value):
+
+        if isinstance(value, tuple):
+            fg, silent = value
+        else:
+            fg = value
+            silent = False
+
+        try:
+            self._fg = self.fgs[fg]
+        except KeyError:
+            if fg in self.fgs.values():
+                self._fg = fg
+            else:
+                raise ValueError("argument '{}' is not supported fg.".format(
+                    fg))
+
+        if not silent:
+            self.update()
+
+        return self.fg
+
+    @property
+    def bg(self):
+        """Get the background color. Set the background color by name or value.
+
+        Returns:
+            str: the current background color code
+
+        """
+        return self._bg
+
+    @bg.setter
+    def bg(self, value):
+
+        if isinstance(value, tuple):
+            bg, silent = value
+        else:
+            bg = value
+            silent = False
+
+        try:
+            self._bg = self.bgs[bg]
+        except KeyError:
+            if bg in self.bgs.values():
+                self._bg = bg
+            else:
+                raise ValueError("argument '{}' is not supported bg.".format(
+                    bg))
+
+        if not silent:
+            self.update()
+
+        return self.bg
+
+    def addpoint(self, pos=(0, 0), silent=False):
         """Add a point to box.
 
         Args:
             pos (tuple, optional): (y, x) coordinates. Defaults to (0, 0).
-            s (bool, optional): Skip updating. Defaults to False.
+            silent (bool, optional): Skip updating. Defaults to False.
 
         Raises:
             TypeError: If pos is not tuple.
@@ -92,7 +207,7 @@ class DBox(Box):
             raise ValueError('too few coordinates given')
 
         self.points.append(pos)
-        if not s:
+        if not silent:
             self.update()
 
     def addpoints(self, *args):
@@ -107,12 +222,12 @@ class DBox(Box):
                 self.addpoint(i, True)
         self.update()
 
-    def removepoint(self, pos=(0, 0), s=False):
+    def removepoint(self, pos=(0, 0), silent=False):
         """Remove a point, selected by coordinates.
 
         Args:
             pos (tuple, optional): (y, x) coordinates. Defaults to (0, 0).
-            s (bool, optional): Skip updating. Defaults to False.
+            silent (bool, optional): Skip updating. Defaults to False.
 
         Raises:
             TypeError: If pos is not tuple.
@@ -127,7 +242,7 @@ class DBox(Box):
         for i, p in enumerate([p for p in self.points]):
             if p[0] == pos[0] and p[1] == pos[1]:
                 self.points.pop(i)
-        if not s:
+        if not silent:
             self.update()
 
     def removepoints(self, *args):
@@ -141,88 +256,35 @@ class DBox(Box):
             self.removepoint(i, True)
         self.update()
 
-    def setstyle(self, style='default', s=False):
-        """Set style of box drawing characters to use.
-
-        Args:
-            style (str, optional): Style key or value. Defaults to 'default'.
-            s (bool, optional): Skip updating. Defaults to False.
-
-        Raises:
-            ValueError: If style is not valid style key or value.
+    @property
+    def style(self):
+        """Get the line style. Set the line style by name or value.
 
         Returns:
-            str: New style.
+            str: the current style value.
 
         """
+        return self._style
+
+    @style.setter
+    def style(self, value):
+
         try:
-            self.style = self.styles[style]
+            style, silent = value
+        except ValueError:
+            style = value
+            silent = False
+
+        try:
+            self._style = self.styles[style]
         except KeyError:
             if style in self.styles.values():
-                self.style = style
+                self._style = style
             else:
                 raise ValueError('argument is not supported style.')
 
-        if not s:
+        if not silent:
             self.update()
-
-        return self.style
-
-    def setfg(self, fg='default', s=False):
-        """Set new Foreground Color.
-
-        Args:
-            fg (str, optional): Foreground Color key or value.
-                Defaults to 'default'.
-            s (bool, optional): Skip updating. Defaults to False.
-
-        Raises:
-            ValueError: If fg is not valid color key or value.
-
-        Returns:
-            str: New Foreground Color
-
-        """
-        try:
-            self.fg = self.fgs[fg]
-        except KeyError:
-            if fg in self.fgs.values():
-                self.fg = fg
-            else:
-                raise ValueError('argument is not supported fg.')
-
-        if not s:
-            self.update()
-
-        return self.fg
-
-    def setbg(self, bg='default', s=False):
-        """Set new Background Color.
-
-        Args:
-            bg (str, optional): Background Color key or value.
-                Defaults to 'default'.
-            s (bool, optional): Skip updating. Defaults to False.
-
-        Raises:
-            ValueError: If bg is not valid color key or value.
-
-        Returns:
-            str: New Background Color
-
-        """
-        try:
-            self.bg = self.bgs[bg]
-        except KeyError:
-            if bg in self.bgs.values():
-                self.bg = bg
-            else:
-                raise ValueError('argument is not supported bg.')
-
-        if not s:
-            self.update()
-
-        return self.bg
 
     def configure(self, pos=None, **kwargs):
         """Configure DBox.
@@ -253,9 +315,9 @@ class DBox(Box):
             bg = self.bg
 
         self.pos = pos
-        self.setstyle(style, True)
-        self.setfg(fg, True)
-        self.setbg(bg, True)
+        self.style = (style, True)
+        self.fg = (fg, True)
+        self.bg = (bg, True)
         self.update()
 
         return True

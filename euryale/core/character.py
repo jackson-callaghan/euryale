@@ -4,6 +4,8 @@ Contains character information and references to other information storage
 for things such as inventory and spells. Effectively the central control for
 a loaded character, to be used as an API of sorts for whatever interface loads
 the character.
+
+TODO: add support for display versions of all calculated values as a stop-gap
 """
 
 import json

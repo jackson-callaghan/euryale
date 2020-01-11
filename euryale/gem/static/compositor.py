@@ -1,14 +1,8 @@
 """Static Compositor and associated Boxtypes.
 
 Box-based compositor with no animations or interactive elements. Absolutely
-the most bare-bones system, really used as the skeleton for Dynamic Compositor
-(dynamic.py).
-
-TODO: parent assignment
-TODO: parent-based alignment
-TODO: alignment against target
-TODO: Box justification
-TODO: replace all getter/setter functions with properties
+the most bare-bones system, but good enough for basic purposes. Eventually to
+be used as the basis for a dynamic version.
 
 TODO: expand Chars list
 TODO: diagonal corners for DBox
@@ -142,75 +136,118 @@ class Compositor:
             self.objectlist.remove(objname)
             return True
 
-    def makebox(
-            self,
-            name,
-            pos=(0, 0),
-            size=(0, 0),
-            dchar=' ',
-            splash=None,
-            fg='default',
-            bg='default',
-            overlay=False,
-            height='top'):
-        """Make a new Box and add to compositor.
+    def makebox(self, **kwargs):
+        """Make a Box and place it in the object list.
+
+        All arguments are technically optional.
 
         Args:
-            name (str, optional): Name of box. Defaults to None.
-            pos (tuple, optional): (y, x) coordinates. Defaults to (0, 0).
-            size (tuple, optional): (height, width) size. Defaults to (0, 0).
-            dchar (str, optional): Default character to fill box.
-                Defaults to ' '.
-            splash (list, optional): 2d list of str or tuple of char, fg, bg.
+            **name (str): Name of box. Defaults to auto-generation via None.
+            **pos (tuple): (y, x) coordinates. Defaults to (0, 0).
+            **size (tuple): (height, width) size. Defaults to (0, 0).
+            **dchar (str): default single character to fill box.
+            **splash (list): 2d list of str or tuple with char, fg and bg
+                defining a premade box fill.
+            **fg (str): Foreground Color key. Defaults to 'default'.
+            **bg (str): Background Color key. Defaults to 'default'.
+            **overlay (bool): Show boxes below through blank chars. Defaults to
+                False.
+            **ytarget (Box): vertical alignment target (can be compositor).
                 Defaults to None.
-            overlay (bool, optional): Show boxes below through blank
-                characters. Defaults to False.
-            height (int, str, optional): Height of box. Defaults to 'top'.
+            **ytalign (str): type of alignment to target vertically
+            **ysalign (str): type of alignment to self vertically
+            **xtarget (Box) horizontal alignment target (can be compositor).
+                Defaults to None.
+            **xtalign (str): type of alignment to target horizontally
+            **xsalign (str): type of alignment to self horizontally
+            **height (str): height of object in objectlist, used for overlaps.
 
         Returns:
             Box: New Box.
 
         """
+        name = kwargs.get("name", None)
+        pos = kwargs.get("pos", (0, 0))
+        size = kwargs.get("size", (1, 1))
+        dchar = kwargs.get("dchar", ' ')
+        splash = kwargs.get("splash", None)
+        overlay = kwargs.get("overlay", False)
+        ytarget = kwargs.get("ytarget", None)
+        ytalign = kwargs.get("ytalign", "center")
+        ysalign = kwargs.get("ysalign", "center")
+        xtarget = kwargs.get("xtarget", None)
+        xtalign = kwargs.get("xtalign", "center")
+        xsalign = kwargs.get("xsalign", "center")
+        height = kwargs.get("height", 'top')
+
         if name is None:
             name = 'box#{}'.format(len(self.objectlist))
 
-        new = Box(self, name=name, pos=pos, size=size, dchar=dchar,
-                  splash=splash, fg=fg, bg=bg, overlay=overlay)
+        new = Box(
+            self,
+            name=name,
+            pos=pos,
+            size=size,
+            dchar=dchar,
+            splash=splash,
+            overlay=overlay,
+            ytarget=ytarget,
+            ytalign=ytalign,
+            ysalign=ysalign,
+            xtarget=xtarget,
+            xtalign=xtalign,
+            xsalign=xsalign)
 
         self.place_object(new, height)
         return new
 
-    def makedbox(
-            self,
-            name,
-            pos=(0, 0),
-            size=(0, 0),
-            points=None,
-            style='default',
-            fg='default',
-            bg='default',
-            overlay=False,
-            height='top'):
-        """Make a new DBox and add to compositor.
+    def makedbox(self, **kwargs):
+        """Make New Dynamic Box and place it in the object list.
 
         Args:
-            name (str, optional): Name of box. Defaults to None.
+            parent (Compositor): Compositor that owns this DBox.
+            name (str): Name of box for reference.
             pos (tuple, optional): (y, x) coordinates. Defaults to (0, 0).
             size (tuple, optional): (height, width) size. Defaults to (0, 0).
-            points ([type], optional): [description]. Defaults to None.
-            style (str, optional): [description]. Defaults to 'default'.
-            fg (str, optional): Foreground Color key or value.
-                Defaults to 'default'.
-            bg (str, optional): Background Color key or value.
-                Defaults to 'default'.
-            overlay (bool, optional): Show boxes below through blank
-                characters. Defaults to False.
-            height (int, str, optional): Height of box. Defaults to 'top'.
+            **overlay (bool): Show boxes below through blank chars. Defaults to
+                False.
+            **points (list): List of (y, x) tuples defining points at init.
+            **style (str): Style key for box drawing characters.
+            **fg (str): Foreground Color key. Defaults to 'default'.
+            **bg (str): Background Color key. Defaults to 'default'.
+            **defaultpoints (bool): Set points in corners. Defaults to 'False'.
+            **ytarget (Box): vertical alignment target (can be compositor).
+                Defaults to None.
+            **ytalign (str): type of alignment to target vertically
+            **ysalign (str): type of alignment to self vertically
+            **xtarget (Box) horizontal alignment target (can be compositor).
+                Defaults to None.
+            **xtalign (str): type of alignment to target horizontally
+            **xsalign (str): type of alignment to self horizontally
+            **height (str): height of object in objectlist, used for overlaps.
 
         Returns:
-            DBox: New DBox.
+            DBox: New Dynamic Box.
 
         """
+
+        name = kwargs.get("name", None)
+        pos = kwargs.get("pos", (0, 0))
+        size = kwargs.get("size", (1, 1))
+        points = kwargs.get("points", None)
+        style = kwargs.get("style", 'default')
+        fg = kwargs.get('fg', 'default')
+        bg = kwargs.get('bg', 'default')
+        defaultpoints = kwargs.get("defaultpoints", False)
+        overlay = kwargs.get("overlay", False)
+        ytarget = kwargs.get("ytarget", None)
+        ytalign = kwargs.get("ytalign", "center")
+        ysalign = kwargs.get("ysalign", "center")
+        xtarget = kwargs.get("xtarget", None)
+        xtalign = kwargs.get("xtalign", "center")
+        xsalign = kwargs.get("xsalign", "center")
+        height = kwargs.get("height", 'top')
+
         if name is None:
             name = 'dbox#{}'.format(len(self.objectlist))
 
@@ -222,50 +259,71 @@ class Compositor:
                    style=style,
                    fg=fg,
                    bg=bg,
-                   overlay=overlay)
+                   overlay=overlay,
+                   defaultpoints=defaultpoints,
+                   ytarget=ytarget,
+                   ytalign=ytalign,
+                   ysalign=ysalign,
+                   xtarget=xtarget,
+                   xtalign=xtalign,
+                   xsalign=xsalign)
 
         self.place_object(new, height)
         return new
 
-    def maketbox(self,
-                 name,
-                 pos=(0, 0),
-                 size=(0, 0),
-                 points=None,
-                 style='default',
-                 fg='default',
-                 bg='default',
-                 overlay=False,
-                 text='',
-                 wrap=False,
-                 justify=None,
-                 border=False,
-                 height='top'):
-        """Make a new TBox and add to compositor.
+    def maketbox(self, **kwargs):
+        """Make new Text Box and place it in the object list.
 
         Args:
+            parent (Compositor): Compositor that owns this TBox.
             name (str, optional): Name of box. Defaults to None.
             pos (tuple, optional): (y, x) coordinates. Defaults to (0, 0).
             size (tuple, optional): (height, width) size. Defaults to (0, 0).
-            points ([type], optional): [description]. Defaults to None.
-            style (str, optional): [description]. Defaults to 'default'.
-            fg (str, optional): Foreground Color key or value.
-                Defaults to 'default'.
-            bg (str, optional): Background Color key or value.
-                Defaults to 'default'.
-            overlay (bool, optional): Show boxes below through blank
-                characters. Defaults to False.
-            text (object, optional): Any object with __str__ method.
+            **text (object): Any object with a __str__ method to render.
                 Defaults to ''.
-            wrap (bool, optional): Wrap text in box. Defaults to False.
-            border (str, optional): Border style key or value. False disables
+            **wrap (bool): Wrap text in textbox. Defaults to False.
+            **border (str): Style key or value for box border. False disables
                 border. Defaults to False.
-            height (int, str, optional): Height of box. Defaults to 'top'.
+            **strip_newlines (bool): Strip newlines from text.
+                Defaults to False.
+            **overlay (bool): Show other boxes below through blank characters.
+                Defaults to False.
+            **fg (str): Foreground Color key. Defaults to 'default'.
+            **bg (str): Background Color key. Defaults to 'default'.
+            **justify (str): Text justification. Defaults to None.
+            **ytarget (Box): vertical alignment target (can be compositor).
+                Defaults to None.
+            **ytalign (str): type of alignment to target vertically
+            **ysalign (str): type of alignment to self vertically
+            **xtarget (Box) horizontal alignment target (can be compositor).
+                Defaults to None.
+            **xtalign (str): type of alignment to target horizontally
+            **xsalign (str): type of alignment to self horizontally
+            **height (str): height of object in objectlist, used for overlaps.
 
         Returns:
-            TBox: New TBox.
+            DBox: New Dynamic Box.
 
         """
+        name = kwargs.get("name", None)
+        pos = kwargs.get("pos", (0, 0))
+        size = kwargs.get("size", (1, 1))
+        style = kwargs.get("style", 'default')
+        fg = kwargs.get('fg', 'default')
+        bg = kwargs.get('bg', 'default')
+        text = kwargs.get("text", '')
+        wrap = kwargs.get("wrap", False)
+        justify = kwargs.get("justify", None)
+        border = kwargs.get("border", False)
+        overlay = kwargs.get("overlay", False)
+        ytarget = kwargs.get("ytarget", None)
+        ytalign = kwargs.get("ytalign", "center")
+        ysalign = kwargs.get("ysalign", "center")
+        xtarget = kwargs.get("xtarget", None)
+        xtalign = kwargs.get("xtalign", "center")
+        xsalign = kwargs.get("xsalign", "center")
+        height = kwargs.get("height", 'top')
+
         if name is None:
             name = 'tbox#{}'.format(len(self.objectlist))
 
@@ -273,7 +331,6 @@ class Compositor:
                    name=name,
                    pos=pos,
                    size=size,
-                   points=points,
                    style=style,
                    fg=fg,
                    bg=bg,
@@ -281,7 +338,13 @@ class Compositor:
                    wrap=wrap,
                    justify=justify,
                    border=border,
-                   overlay=overlay)
+                   overlay=overlay,
+                   ytarget=ytarget,
+                   ytalign=ytalign,
+                   ysalign=ysalign,
+                   xtarget=xtarget,
+                   xtalign=xtalign,
+                   xsalign=xsalign)
 
         self.place_object(new, height)
         return new

@@ -37,6 +37,14 @@ class TBox(DBox):
             **fg (str): Foreground Color key. Defaults to 'default'.
             **bg (str): Background Color key. Defaults to 'default'.
             **justify (str): Text justification. Defaults to None.
+            **ytarget (Box): vertical alignment target (can be compositor).
+                Defaults to None.
+            **ytalign (str): type of alignment to target vertically
+            **ysalign (str): type of alignment to self vertically
+            **xtarget (Box) horizontal alignment target (can be compositor).
+                Defaults to None.
+            **xtalign (str): type of alignment to target horizontally
+            **xsalign (str): type of alignment to self horizontally
 
         Raises:
             TypeError: If strip_newlines is not bool.
@@ -56,8 +64,14 @@ class TBox(DBox):
             raise TypeError("strip_newlines is not bool")
         if not isinstance(wrap, bool):
             raise TypeError("wrap is not bool")
-        super().__init__(parent=parent, name=name, pos=pos, size=size,
-                         overlay=overlay, fg=fg, bg=bg)
+        super().__init__(
+            parent=parent,
+            name=name,
+            pos=pos,
+            size=size,
+            overlay=overlay,
+            fg=fg,
+            bg=bg)
 
         self.text = text
         self.wrap = wrap
