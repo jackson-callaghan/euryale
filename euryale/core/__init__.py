@@ -1,7 +1,7 @@
-from .abilities import *
-from .character import *
-from .feats import *
-from .inventory import *
-from .magic import *
-from .registry import *
-from .utilities import *
+from .abilities import Abilities
+from .character import Character
+from .feats import Feats
+from .inventory import Inventory
+from .magic import Magic
+from .registry import Registry
+from .utilities import DICE, read_char

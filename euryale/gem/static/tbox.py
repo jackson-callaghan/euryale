@@ -73,12 +73,31 @@ class TBox(DBox):
             fg=fg,
             bg=bg)
 
-        self.text = text
+        self._text = text
         self.wrap = wrap
         self.justify = justify
         self.strip_newlines = strip_newlines
 
         self.setborder(border)
+        self.update()
+
+    @property
+    def text(self):
+        """Get the current text. Set a new text.
+
+        Can be given a method to call to get text.
+
+        Args:
+            text (object): Any object with a __str__ method.
+
+        """
+        if callable(self._text):
+            return self._text()
+        return self._text
+
+    @text.setter
+    def text(self, text):
+        self.text = text
         self.update()
 
     def setwrap(self, wrap=False):
@@ -143,16 +162,6 @@ class TBox(DBox):
             self.addpoints((y1, x1), (y1, x2), (y2, x2), (y2, x1))
 
         return self.border
-
-    def settext(self, text):
-        """Set text to new object or str.
-
-        Args:
-            text (object): Any object with a __str__ method.
-
-        """
-        self.text = text
-        self.update()
 
     def update(self):
         """Update TBox."""

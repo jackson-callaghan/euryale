@@ -275,10 +275,10 @@ class Compositor:
         """Make new Text Box and place it in the object list.
 
         Args:
-            parent (Compositor): Compositor that owns this TBox.
-            name (str, optional): Name of box. Defaults to None.
-            pos (tuple, optional): (y, x) coordinates. Defaults to (0, 0).
-            size (tuple, optional): (height, width) size. Defaults to (0, 0).
+            **parent (Compositor): Compositor that owns this TBox.
+            **name (str, optional): Name of box. Defaults to None.
+            **pos (tuple, optional): (y, x) coordinates. Defaults to (0, 0).
+            **size (tuple, optional): (height, width) size. Defaults to (0, 0).
             **text (object): Any object with a __str__ method to render.
                 Defaults to ''.
             **wrap (bool): Wrap text in textbox. Defaults to False.

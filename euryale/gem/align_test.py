@@ -2,7 +2,7 @@ from static import Compositor, Fore, Back, Style, Chars
 import time
 
 
-myc = Compositor()
+myc = Compositor(size=(20, 20))
 
 sizes = [
     # 1,

@@ -48,7 +48,7 @@ class Character:
         self.subrace = cdata.get("subrace", None)
         self.size = cdata.get("size", "Medium")
         self.speed = cdata.get("speed", 30)
-        self.gender = cdata.get("gender", "NB")
+        self.gender = cdata.get("gender", "?")
         self.age = cdata.get("age", 0)
         self.height = cdata.get("height", 0)
         self.weight = cdata.get("weight", 0)
@@ -205,6 +205,9 @@ class Character:
 
         """
         return True if len(self.classes) > 1 else False
+
+    def get_name(self):
+        return self.name
 
     def level_up(self, clas):
         """Level up a given class.
