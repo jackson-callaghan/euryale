@@ -18,6 +18,8 @@ from .box import Box
 from .dbox import DBox
 from .tbox import TBox
 
+import re
+
 from colorama import init as fgama_init  # used to support ANSI in windows cmd
 
 # import logging
@@ -55,6 +57,8 @@ class Compositor:
         self.populate()
         self.blank = self.grid
 
+        self.overlay_match = re.compile("(\\033\[\d{4}\s\\033\[0m)|(\s)")
+
     def populate(self):
         """Populate grid with blank segments.
 
@@ -69,6 +73,11 @@ class Compositor:
                 self.segments.append(self.grid[y][x])
 
         return self.grid
+
+    def resize(self, size):
+        self.size = size
+        self.grid = []
+        self.populate()
 
     def clear(self):
         """Configure all segments in grid to be blank.
@@ -302,7 +311,7 @@ class Compositor:
             **height (str): height of object in objectlist, used for overlaps.
 
         Returns:
-            DBox: New Dynamic Box.
+            TBox: New Text Box.
 
         """
         name = kwargs.get("name", None)
@@ -387,7 +396,7 @@ class Compositor:
             for x in range(x1, x2 + 1):
                 seg = splash[y - y1][x - x1]
                 if obj.overlay:
-                    if seg.char in ('', ' '):
+                    if self.overlay_match.match(seg.char):
                         self.setsegment((y, x), self.grid[y][x].char,
                                         self.grid[y][x].fg, seg.bg)
                     else:

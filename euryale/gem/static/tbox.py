@@ -59,6 +59,12 @@ class TBox(DBox):
         fg = kwargs.get('fg', 'default')
         bg = kwargs.get('bg', 'default')
         justify = kwargs.get('justify', None)
+        ytarget = kwargs.get("ytarget", None)
+        ytalign = kwargs.get("ytalign", "center")
+        ysalign = kwargs.get("ysalign", "center")
+        xtarget = kwargs.get("xtarget", None)
+        xtalign = kwargs.get("xtalign", "center")
+        xsalign = kwargs.get("xsalign", "center")
         # check arguments are valid
         if not isinstance(strip_newlines, bool):
             raise TypeError("strip_newlines is not bool")
@@ -71,7 +77,14 @@ class TBox(DBox):
             size=size,
             overlay=overlay,
             fg=fg,
-            bg=bg)
+            bg=bg,
+            ytarget=ytarget,
+            ytalign=ytalign,
+            ysalign=ysalign,
+            xtarget=xtarget,
+            xtalign=xtalign,
+            xsalign=xsalign
+        )
 
         self._text = text
         self.wrap = wrap
@@ -93,11 +106,12 @@ class TBox(DBox):
         """
         if callable(self._text):
             return self._text()
-        return self._text
+        else:
+            return self._text
 
     @text.setter
     def text(self, text):
-        self.text = text
+        self._text = text
         self.update()
 
     def setwrap(self, wrap=False):
@@ -158,13 +172,15 @@ class TBox(DBox):
             y2 = self.size[0] - 1
             x2 = self.size[1] - 1
 
-            self.setstyle(self.border, True)
+            self.style = (self.border, True)
             self.addpoints((y1, x1), (y1, x2), (y2, x2), (y2, x1))
 
         return self.border
 
     def update(self):
         """Update TBox."""
+        self.points = []
+        self.setborder(self.border)
         super().update()
         text = str(self.text)
         if self.strip_newlines:

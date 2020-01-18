@@ -1,16 +1,19 @@
 """
 
-TODO: write getter methods for basically everything in character class
+TODO: finish resize handling: add resize methods where applicable.
+Inlcude defaultpoints argument for a dbox resize.
 """
 
 
 from core import Character, utilities
 import gem.static as gs
 import os
+import string
 
 
 def main():
-    size = (TERM_SIZE[1] - 2, TERM_SIZE[0])
+    termsize = get_terminal_size(fallback=(120, 29))
+    size = (termsize[1] - 2, termsize[0])
 
     name = namelookup()
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -18,34 +21,80 @@ def main():
     c = Character(utilities.read_char(name))
 
     g = gs.Compositor(size=size)
-    details = g.makebox(
+    details = g.makedbox(
         name='details',
-        pos=(0, 0)
+        pos=(0, 0),
+        size=(5, size[1]),
+        defaultpoints=True
     )
-    details.setarea(
-        c1=(0, 0),
-        c2=details.size,
-        char=gs.style.Chars.BLOCK_FULL,
-        fg="white"
-    )
+
     name = g.maketbox(
         name="name",
         size=(1, len(c.name)),
-        text=c.get_name,
-        overlay=True,
+        text=c.name,
         fg="black",
+        bg="white",
         ytarget=details,
         ytalign="top",
         ysalign="center",
-        xtarget=details
+        xtarget=details,
+        xtalign="ileft",
+        xsalign="aleft"
+    )
+
+    d_line1 = g.maketbox(
+        name='line1',
+        pos=(0, 0),
+        size=(1, size[1] - 2),
+        ytarget=details,
+        ytalign="top",
+        ysalign="below",
+        xtarget=details,
+        xtalign="ileft",
+        xsalign="aleft"
+    )
+    d_line2 = g.maketbox(
+        name='line1',
+        size=(1, size[1] - 2),
+        ytarget=d_line1,
+        ytalign="bottom",
+        ysalign="below",
+        xtarget=d_line1,
+        xtalign="left",
+        xsalign="aleft"
     )
 
     g.composite()
 
     while True:
-        c.name = "Tonka Dogchef"
-        my_test = input("\n> ")
+
+        # check if terminal is resized and resize everything
+        ntermsize = get_terminal_size(fallback=(120, 29))
+        if ntermsize != termsize:
+            termsize = get_terminal_size(fallback=(120, 29))
+            size = (termsize[1] - 2, termsize[0])
+            g.resize(size)
+
+        d_line1.text = "Level {} {} {} {} | Size: {} | Alignment: {} | Religion: {}".format(
+            string.capwords(str(c.character_level)),
+            string.capwords(str(c.gender)),
+            string.capwords(str(c.subrace)),
+            string.capwords(str(c.race)),
+            string.capwords(str(c.size)),
+            string.capwords(str(c.alignment)),
+            string.capwords(str(c.religion)),
+        )
+        d_line2.text = "Age: {} | Height: {} | Weight: {} | Skin: {} | Eyes: {} | Hair: {}".format(
+
+            string.capwords(str(c.age)),
+            c.height,
+            c.weight,
+            string.capwords(str(c.skin)),
+            string.capwords(str(c.eyes)),
+            string.capwords(str(c.hair))
+        )
         g.composite()
+        again = input("> ")
 
 
 def namelookup(keyword=None):

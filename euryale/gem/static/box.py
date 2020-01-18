@@ -250,7 +250,7 @@ class Box:
                 pos[1] <= len(self.grid[0]) - 1)
                ):
             self.grid[pos[0]][pos[1]].configure(
-                pos, char, fg=fg, bg=bg)
+                pos, char=char, fg=fg, bg=bg)
 
     def from_splash(self, splash):
         """Set grid from a splash.
@@ -332,7 +332,7 @@ class Box:
 
         for y in range(y1, y2 + 1):
             for x in range(x1, x2 + 1):
-                self.setsegment((y, x), char, fg=fg, bg=bg)
+                self.setsegment((y, x), char=char, fg=fg, bg=bg)
 
         return self.grid
 

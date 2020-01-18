@@ -91,13 +91,26 @@ class DBox(Box):
         overlay = kwargs.get('overlay', False)
         points = kwargs.get('points', None)
         style = kwargs.get('style', 'default')
+        ytarget = kwargs.get("ytarget", None)
+        ytalign = kwargs.get("ytalign", "center")
+        ysalign = kwargs.get("ysalign", "center")
+        xtarget = kwargs.get("xtarget", None)
+        xtalign = kwargs.get("xtalign", "center")
+        xsalign = kwargs.get("xsalign", "center")
 
         super().__init__(
             parent,
             name,
             pos=pos,
             size=size,
-            overlay=overlay)
+            overlay=overlay,
+            ytarget=ytarget,
+            ytalign=ytalign,
+            ysalign=ysalign,
+            xtarget=xtarget,
+            xtalign=xtalign,
+            xsalign=xsalign
+        )
 
         if points is None:
             self.points = []
@@ -338,7 +351,7 @@ class DBox(Box):
             """
             return True if not isinstance(obj, bool) else False
 
-        self.setarea((0, 0), self.size, ' ', fg=self.fg, bg=self.bg)
+        self.setarea((0, 0), self.size, char=' ', fg=self.fg, bg=self.bg)
 
         for point in self.points:
             y = point[0]

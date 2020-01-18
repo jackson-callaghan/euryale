@@ -42,35 +42,47 @@ class Segment:
         self.char = char
         # control character libraries
         self.fgs = {
-            'black'  : "30",
-            'red'    : "31",
-            'green'  : "32",
-            'yellow' : "33",
-            'blue'   : "34",
+            'black': "30",
+            'red': "31",
+            'green': "32",
+            'yellow': "33",
+            'blue': "34",
             'magenta': "35",
-            'cyan'   : "36",
-            'white'  : "37",
+            'cyan': "36",
+            'white': "37",
 
-            'reset'  : "39",
+            'reset': "39",
             'default': "37"
         }
         self.bgs = {
-            'black'  : "40",
-            'red'    : "41",
-            'green'  : "42",
-            'yellow' : "43",
-            'blue'   : "44",
+            'black': "40",
+            'red': "41",
+            'green': "42",
+            'yellow': "43",
+            'blue': "44",
             'magenta': "45",
-            'cyan'   : "46",
-            'white'  : "47",
+            'cyan': "46",
+            'white': "47",
 
-            'reset'  : "49",
+            'reset': "49",
             'default': "40"
         }
         self.fg = self.fgs['default']
         self.bg = self.bgs['default']
         self.setfg(fg)
         self.setbg(bg)
+
+    def __str__(self):
+        """Format into str with ANSI decorators for use in compositor.
+
+        Returns:
+            str: Formatted str.
+
+        """
+        ret = "{}{};{}m{}{}".format(
+            "\033[", self.fg, self.bg, self.char, "\033[0m")
+
+        return ret
 
     def setcharacter(self, char=' '):
         """Set new character.
@@ -193,15 +205,3 @@ class Segment:
         self.setbg(bg)
 
         return True
-
-    def __str__(self):
-        """Format into str with ANSI decorators for use in compositor.
-
-        Returns:
-            str: Formatted str.
-
-        """
-        ret = "{}{};{}m{}{}".format(
-            "\033[", self.fg, self.bg, self.char, "\033[0m")
-
-        return ret

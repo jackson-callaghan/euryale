@@ -5,6 +5,9 @@ for things such as inventory and spells. Effectively the central control for
 a loaded character, to be used as an API of sorts for whatever interface loads
 the character.
 
+RULE: If it cannot be directly set, make it a function, instead of a property.
+      If it can be directly set, make it a property.
+
 TODO: add support for display versions of all calculated values as a stop-gap
 """
 
@@ -55,6 +58,9 @@ class Character:
         self.skin = cdata.get("skin", "Nondescript")
         self.eyes = cdata.get("eyes", "Nondescript")
         self.hair = cdata.get("hair", "Nondescript")
+        self.background = cdata.get("background", None)
+        self.alignment = cdata.get("alignment", None)
+        self.religion = cdata.get("religion", None)
 
         # ---- level/class information ----
         self.character_level = cdata.get("level", 1)
@@ -69,18 +75,21 @@ class Character:
             raise ValueError("missing class level dictionary!")
 
         # dict of class: subclass
-        self.subclass = cdata.get("subclass", None)
+        self.subclasses = cdata.get("subclasses", None)
 
         # ---- some more information ----
         # holds either rolled health or None to indicate auto-health calc
         self._max_health = cdata.get("max health", None)
         self.health = cdata.get("health", self.max_health)
         self.temp_health = cdata.get("temp health", 0)
-        self.background = cdata.get("background", None)
-        self.religion = cdata.get("religion", None)
+
+        self.languages = cdata.get("languages", [])
         # dict of proficiency: level (1 for proficient, 2 for expertise)
         self.proficiencies = cdata.get("proficiencies", {})
-        self.languages = cdata.get("languages", [])
+
+        self._max_attuned = cdata.get("max_attuned", None)
+        self._attuend = cdata.get("attuned", None)
+        self._n_attuned = cdata.get("n_attuned", None)
 
     def __str__(self):
         """Return string format of character sheet.
@@ -100,7 +109,7 @@ class Character:
         line2 = ", ".join(
             ["level {} {} {}".format(
                 self.classes[i],
-                self.subclass[i],
+                self.subclasses[i],
                 i)
                 for i in self.classes.keys()])
         line3 = "\n".join((
@@ -114,20 +123,6 @@ class Character:
         return "\n".join((line1, line2, line3))
 
     @property
-    def max_hit_dice(self):
-        """Return max hit dice.
-
-        Returns:
-            dict: Max hit dice.
-
-        """
-        max_hit_dice = {}
-        for class_, level in self.classes.items():
-            # diepair: 0: hitdie value, 1: number of hitdie from class levels
-            max_hit_dice[class_] = (self.class_list[class_]["hit die"], level)
-        return max_hit_dice
-
-    @property
     def max_health(self):
         """Return max health.
 
@@ -139,7 +134,7 @@ class Character:
             return self._max_health
         else:
             total = 0
-            for class_, diepair in self.max_hit_dice.items():
+            for class_, diepair in self.max_hit_dice().items():
                 # diepair: 0: hitdie value, 1: number of hitdie
                 if class_ == self.starting_class:
                     total += diepair[0] + self.abilities.con_mod
@@ -157,6 +152,110 @@ class Character:
         self._max_health = value
 
     @property
+    def max_attuned(self):
+        return self._max_attuned
+
+    @max_attuned.setter
+    def max_attuned(self, value):
+        self._max_attuned = value
+
+    @property
+    def attuned(self):
+        return self._attuned
+
+    @attuned.setter
+    def attuned(self, value):
+        self._attuned = value
+
+    # What follows is a very stupid solution to a immutability problem
+    # when attempting to update attributes passed to a class.
+    # I figured just pass getters instead because I'm dumb and lazy.
+
+    def get_name(self):
+        return self.name
+
+    def get_race(self):
+        return self.race
+
+    def get_subrace(self):
+        return self.subrace
+
+    def get_size(self):
+        return self.size
+
+    def get_speed(self):
+        return self.speed
+
+    def get_gender(self):
+        return self.gender
+
+    def get_age(self):
+        return self.age
+
+    def get_height(self):
+        return self.height
+
+    def get_weight(self):
+        return self.weight
+
+    def get_skin(self):
+        return self.skin
+
+    def get_eyes(self):
+        return self.eyes
+
+    def get_hair(self):
+        return self.hair
+
+    def get_background(self):
+        return self.background
+
+    def get_religion(self):
+        return self.religion
+
+    def get_character_level(self):
+        return self.character_level
+
+    def get_starting_class(self):
+        return self.starting_class
+
+    def get_classes(self):
+        return self.classes
+
+    def get_subclasses(self):
+        return self.subclasses
+
+    def get_max_health(self):
+        return self.max_health
+
+    def get_health(self):
+        return self.health
+
+    def get_temp_health(self):
+        return self.temp_health
+
+    def get_languages(self):
+        return self.languages
+
+    def get_proficiencies(self):
+        return self.proficiencies
+
+    def get_attuned(self):
+        return self.attuned
+
+    def max_hit_dice(self):
+        """Return max hit dice.
+
+        Returns:
+            dict: Max hit dice.
+
+        """
+        max_hit_dice = {}
+        for class_, level in self.classes.items():
+            # diepair: 0: hitdie value, 1: number of hitdie from class levels
+            max_hit_dice[class_] = (self.class_list[class_]["hit die"], level)
+        return max_hit_dice
+
     def proficiency_bonus(self):
         """Return the current proficiency bonus.
 
@@ -166,7 +265,6 @@ class Character:
         """
         return math.ceil((self.character_level / 4) + 1)
 
-    @property
     def n_attuned(self):
         """Return the number of attuned magic items.
 
@@ -175,6 +273,15 @@ class Character:
 
         """
         return len(self.attuned)
+
+    def is_multiclassed(self):
+        """Check if character is multiclassed.
+
+        Returns:
+            bool: True if character is multiclassed else False
+
+        """
+        return True if len(self.classes) > 1 else False
 
     def update_classes(self, **kwargs):
         """Replace current classes and levels.
@@ -195,19 +302,6 @@ class Character:
         """things to update:
         - idk yet
         """
-
-    @property
-    def is_multiclassed(self):
-        """Check if character is multiclassed.
-
-        Returns:
-            bool: True if character is multiclassed else False
-
-        """
-        return True if len(self.classes) > 1 else False
-
-    def get_name(self):
-        return self.name
 
     def level_up(self, clas):
         """Level up a given class.

@@ -1,28 +1,29 @@
 {
     "name": "Tanya Degurechaff",
-    "race": "aasimar",
-    "subrace": "protection",
+    "race": "Aasimar",
+    "subrace": "Protection",
     "size": "medium",
     "speed": 30,
     "gender": "female",
     "age": 12,
     "height": "4,0",
-    "weight": "92",
-    "skin": "pale",
-    "eyes": "blue/gold",
-    "hair": "blonde",
+    "weight": "92 lbs",
+    "skin": "Pale",
+    "eyes": "Blue/Gold",
+    "hair": "Blonde",
     "level": 16,
     "starting class": "wizard",
     "classes": {
         "wizard": 16
     },
-    "subclass": {
+    "subclasses": {
         "wizard": "evocation"
     },
     "max health": null,
     "health": 114,
     "temp health": 0,
     "background": "soldier",
+    "alignment": "Lawful Evil",
     "religion": "Being X",
     "abilities": {
         "strength": 11,
