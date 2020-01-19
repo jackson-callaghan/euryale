@@ -231,6 +231,25 @@ class Box:
 
         return self.grid
 
+    def resize(self, newsize):
+        """Resize the box.
+
+        Args:
+            newsize (tuple): (height, width) size.
+        """
+        grid = self.grid
+        if newsize <= self.size:
+            grid = [i[0:newsize[1]] for i in grid[0:newsize[0]]]
+        splashgrid = grid
+        for y, line in enumerate(grid):
+            for x, seg in enumerate(line):
+                splashgrid[y][x] = (seg.char, seg.fg, seg.bg)
+        self.grid = []
+        self.segments = []
+        self.size = newsize
+        self.populate()
+        self.from_splash(splashgrid)
+
     def setsegment(self, pos=(0, 0), char=None, **kwargs):
         """Configure a single segment.
 

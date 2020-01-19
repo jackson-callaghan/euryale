@@ -114,6 +114,18 @@ class TBox(DBox):
         self._text = text
         self.update()
 
+    def resize(self, newsize):
+        """Resize the box.
+
+        Args:
+            newsize (tuple): (height, width) size.
+        """
+        self.grid = []
+        self.segments = []
+        self.size = newsize
+        self.populate()
+        self.update()
+
     def setwrap(self, wrap=False):
         """Set wrap option.
 
@@ -173,7 +185,7 @@ class TBox(DBox):
             x2 = self.size[1] - 1
 
             self.style = (self.border, True)
-            self.addpoints((y1, x1), (y1, x2), (y2, x2), (y2, x1))
+            self.default_points()
 
         return self.border
 

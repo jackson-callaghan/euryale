@@ -127,11 +127,7 @@ class DBox(Box):
         defaultpoints = kwargs.get('defaultpoints', False)
 
         if defaultpoints:
-            self.addpoints(
-                (0, 0),
-                (self.size[0] - 1, 0),
-                (0, self.size[1] - 1),
-                (self.size[0] - 1, self.size[1] - 1))
+            self.default_points()
 
         if len(self.points) > 0:
             self.update()
@@ -202,6 +198,40 @@ class DBox(Box):
 
         return self.bg
 
+    def default_points(self):
+        """Add default points to the dbox.
+
+        Default points are the four corners.
+        """
+        self.addpoints(
+            (0, 0),
+            (self.size[0] - 1, 0),
+            (0, self.size[1] - 1),
+            (self.size[0] - 1, self.size[1] - 1))
+
+    def resize(self, newsize, rm_oldpoints=False, defaultpoints=False):
+        """Resize the box.
+
+        Args:
+            newsize (tuple): (height, width) size.
+        """
+        self.grid = []
+        self.segments = []
+        self.size = newsize
+        self.populate()
+
+        if rm_oldpoints:
+            self.points = []
+        else:
+            for point in [p for p in self.points]:
+                if point > (self.size[0] - 1, self.size[1] - 1):
+                    self.removepoint(point, True)
+
+        if defaultpoints:
+            self.default_points()
+
+        self.update()
+
     def addpoint(self, pos=(0, 0), silent=False):
         """Add a point to box.
 
@@ -253,7 +283,7 @@ class DBox(Box):
             raise ValueError('too few coordinates given')
 
         for i, p in enumerate([p for p in self.points]):
-            if p[0] == pos[0] and p[1] == pos[1]:
+            if p == pos:
                 self.points.pop(i)
         if not silent:
             self.update()

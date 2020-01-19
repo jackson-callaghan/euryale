@@ -74,9 +74,10 @@ class Compositor:
 
         return self.grid
 
-    def resize(self, size):
-        self.size = size
+    def resize(self, newsize):
+        self.size = newsize
         self.grid = []
+        self.segments = []
         self.populate()
 
     def clear(self):

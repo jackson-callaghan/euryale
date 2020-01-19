@@ -71,16 +71,16 @@ def main():
         # check if terminal is resized and resize everything
         ntermsize = get_terminal_size(fallback=(120, 29))
         if ntermsize != termsize:
-            termsize = get_terminal_size(fallback=(120, 29))
+            termsize = ntermsize
             size = (termsize[1] - 2, termsize[0])
-            g.resize(size)
+            g.resize(size)  # don't make this one smaller than anything else
+            details.resize((5, size[1]), True, True)
+            d_line1.resize((1, size[1] - 2))
+            d_line2.resize((1, size[1] - 2))
 
-        name.size = (1, len(c.name))
-        name.text = c.name
-        name.update()
-        # this doesn't work because no box successfully increases its grid size
-        # maybe just make size a property so you don't need a resize method?
-        # consider also doing this for compositor
+        if c.name != name.text:
+            name.resize((1, len(c.name)))
+            name.text = c.name
 
         d_line1.text = "Level {} {} {} {} | Size: {} | Alignment: {} | Religion: {}".format(
             string.capwords(str(c.character_level)),
@@ -122,8 +122,10 @@ def namelookup(keyword=None):
             return None
 
     print("=" * (TERM_SIZE[0] - 1))
-    print("Found {} existing files".format(
-        len(names)).center(TERM_SIZE[0] - 1))
+    print("Found {} existing file{}".format(
+        len(names),
+        "s" if len(names) > 1 else ""
+    ).center(TERM_SIZE[0] - 1))
 
     for i in range(len(names)):
         print("[{}] {}".format(i + 1, names[i]))
