@@ -75,6 +75,13 @@ def main():
             size = (termsize[1] - 2, termsize[0])
             g.resize(size)
 
+        name.size = (1, len(c.name))
+        name.text = c.name
+        name.update()
+        # this doesn't work because no box successfully increases its grid size
+        # maybe just make size a property so you don't need a resize method?
+        # consider also doing this for compositor
+
         d_line1.text = "Level {} {} {} {} | Size: {} | Alignment: {} | Religion: {}".format(
             string.capwords(str(c.character_level)),
             string.capwords(str(c.gender)),
@@ -93,8 +100,14 @@ def main():
             string.capwords(str(c.eyes)),
             string.capwords(str(c.hair))
         )
+
         g.composite()
+
         again = input("> ")
+        try:  # made this shitty thing for live testing
+            exec(again)
+        except SyntaxError:
+            continue
 
 
 def namelookup(keyword=None):
