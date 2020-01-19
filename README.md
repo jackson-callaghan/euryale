@@ -4,7 +4,7 @@ A character sheet manager/editor written in python
 
 ## Motivation
 
-I don't like most way's I've worked with character sheets in the past, and I like having things handled for me. Also I want to be able to export my sheet in a way that's not a pain for others.
+I don't like most ways I've worked with character sheets in the past, and I like having things handled for me. Also I want to be able to export my sheet in a way that's not a pain for others.
 
 ## Roadmap
 
@@ -21,6 +21,8 @@ I don't like most way's I've worked with character sheets in the past, and I lik
 6. More user-friendly creations and editing tools for character, items, feats, etc
 
 7. Some fancy polish and general ease-of-use
+
+8. Create gem.dynamic and redesign to use it
 
 
 ## Important considerations
