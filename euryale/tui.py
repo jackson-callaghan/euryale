@@ -79,9 +79,16 @@ def main():
             details.resize((5, size[1]), True, True)
             d_line1.resize((1, size[1] - 2))
             d_line2.resize((1, size[1] - 2))
+            name.resize((1,
+                         len(c.name) if
+                         len(c.name) <= size[1] - 2 else size[1] - 2
+                         ))
 
         if c.name != name.text:
-            name.resize((1, len(c.name)))
+            name.resize((1,
+                         len(c.name) if
+                         len(c.name) <= size[1] - 2 else size[1] - 2
+                         ))
             name.text = c.name
 
         d_line1.text = "Level {} {} {} {} | Size: {} | Alignment: {} | Religion: {}".format(
