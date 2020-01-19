@@ -178,11 +178,6 @@ class TBox(DBox):
         self.border = border
 
         if self.border is not False:
-            y1 = 0
-            x1 = 0
-
-            y2 = self.size[0] - 1
-            x2 = self.size[1] - 1
 
             self.style = (self.border, True)
             self.default_points()

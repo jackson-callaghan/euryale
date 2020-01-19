@@ -207,7 +207,9 @@ class DBox(Box):
             (0, 0),
             (self.size[0] - 1, 0),
             (0, self.size[1] - 1),
-            (self.size[0] - 1, self.size[1] - 1))
+            (self.size[0] - 1, self.size[1] - 1),
+            silent=True
+        )
 
     def resize(self, newsize, rm_oldpoints=False, defaultpoints=False):
         """Resize the box.
@@ -253,17 +255,20 @@ class DBox(Box):
         if not silent:
             self.update()
 
-    def addpoints(self, *args):
+    def addpoints(self, *args, **kwargs):
         """Add multiple points.
 
         Args:
             *args (tuple): Arbitrary amount of (y, x) point arguments.
+            **silent (bool): Skip updating. Defaults to False.
 
         """
+        silent = kwargs.get("silent", False)
         for i in args:
             if i not in self.points:
                 self.addpoint(i, True)
-        self.update()
+        if not silent:
+            self.update()
 
     def removepoint(self, pos=(0, 0), silent=False):
         """Remove a point, selected by coordinates.

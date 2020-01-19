@@ -54,9 +54,9 @@ def standardtest():
     surround.ytarget = tbox
     surround.xtarget = tbox
     myc.composite()
-    tbox.settext("""Quis ea nulla quis reprehenderit sint fu
+    tbox.text = """Quis ea nulla quis reprehenderit sint fu
     esse sit consectetur. Consectetur sint sunt adipisicing ipsum enim cupidata
-    est.Culpa laborum voluptate commodo incididunt et. """)
+    est.Culpa laborum voluptate commodo incididunt et. """
     myc.composite()
     tbox.style = Style.BLOCKSHADEM
     tbox.pos = (15, 35)
@@ -68,6 +68,10 @@ def standardtest():
     myc.composite()
     newtbox = myc.maketbox(name='smalltest', pos=(17, 17), size=(1, 30), overlay=True,
                            text="Short box test")
+    myc.composite()
+
+    tbox.setborder("default")
+
     myc.composite()
 
     time.sleep(5)

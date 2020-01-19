@@ -1,7 +1,9 @@
 """
 
-TODO: finish resize handling: add resize methods where applicable.
-Inlcude defaultpoints argument for a dbox resize.
+TODO: add documentation where necessary
+TODO: redo anything that should be turned into a property (see box classes)
+TODO: abilities and skills (ensure dynamic resizing)
+
 """
 
 
