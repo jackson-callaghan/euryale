@@ -12,7 +12,7 @@ class Abilities:
     Mostly methods to get more useful information from stored values.
     """
 
-    def __init__(self, cdata):
+    def __init__(self, parent, cdata):
         """Instantiate the Abilities class.
 
         Args:
@@ -23,12 +23,16 @@ class Abilities:
         """TODO convert all these to underscore storage values,
         and create properties for all of them.
         """
+
+        self.parent = parent
         self._str = cdata.get("abilities").get("strength")
         self._dex = cdata.get("abilities").get("dexterity")
         self._con = cdata.get("abilities").get("constitution")
         self._int = cdata.get("abilities").get("intelligence")
         self._wis = cdata.get("abilities").get("wisdom")
         self._cha = cdata.get("abilities").get("charisma")
+
+        self.proficiencies = cdata.get("proficiencies", {})
 
     @property
     def str(self):
@@ -123,12 +127,12 @@ class Abilities:
 
         """
         skills = {}
-        skills["str"] = self.str
-        skills["dex"] = self.dex
-        skills["con"] = self.con
-        skills["int"] = self.int
-        skills["wis"] = self.wis
-        skills["cha"] = self.cha
+        skills["strength"] = self.str
+        skills["dexterity"] = self.dex
+        skills["constitution"] = self.con
+        skills["intelligence"] = self.int
+        skills["wisdom"] = self.wis
+        skills["charisma"] = self.cha
 
         return skills
 
@@ -201,12 +205,12 @@ class Abilities:
 
         """
         mod = {}
-        mod["str"] = self.str_mod
-        mod["dex"] = self.dex_mod
-        mod["con"] = self.con_mod
-        mod["int"] = self.int_mod
-        mod["wis"] = self.wis_mod
-        mod["cha"] = self.cha_mod
+        mod["strength"] = self.str_mod
+        mod["dexterity"] = self.dex_mod
+        mod["constitution"] = self.con_mod
+        mod["intelligence"] = self.int_mod
+        mod["wisdom"] = self.wis_mod
+        mod["charisma"] = self.cha_mod
 
         return mod
 
@@ -224,4 +228,30 @@ class Abilities:
         for ab, sk in self.ability_map.items():
             if skill in sk:
                 mod += self.modifiers[ab]
+        if self.has_proficiency(skill):
+            mod += self.proficiency_bonus()
         return mod
+
+    def has_proficiency(self, proficiency):
+        """Check if character has a proficiency.
+
+        Args:
+            proficiency (str): name of a proficiency
+
+        Returns:
+            int: proficiency level (1 for proficiency, 2 for expertise) or 0
+
+        """
+        if proficiency in self.proficiencies.keys():
+            return self.proficiencies[proficiency]
+        else:
+            return 0
+
+    def proficiency_bonus(self):
+        """Return the current proficiency bonus.
+
+        Returns:
+            int: Proficiency bonus based on level.
+
+        """
+        return math.ceil((self.parent.character_level / 4) + 1)

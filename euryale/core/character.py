@@ -40,7 +40,7 @@ class Character:
             self.ability_map = json.load(ability_map_file)
 
         # ---- Info stored in special classes ----
-        self.abilities = ab.Abilities(cdata)
+        self.abilities = ab.Abilities(self, cdata)
         self.feats = ft.Feats(cdata)
         self.inventory = iv.Inventory(cdata)
         self.magic = mg.Magic(cdata)
@@ -85,7 +85,7 @@ class Character:
 
         self.languages = cdata.get("languages", [])
         # dict of proficiency: level (1 for proficient, 2 for expertise)
-        self.proficiencies = cdata.get("proficiencies", {})
+
 
         self._max_attuned = cdata.get("max_attuned", None)
         self._attuend = cdata.get("attuned", None)
@@ -179,15 +179,6 @@ class Character:
             # diepair: 0: hitdie value, 1: number of hitdie from class levels
             max_hit_dice[class_] = (self.class_list[class_]["hit die"], level)
         return max_hit_dice
-
-    def proficiency_bonus(self):
-        """Return the current proficiency bonus.
-
-        Returns:
-            int: Proficiency bonus based on level.
-
-        """
-        return math.ceil((self.character_level / 4) + 1)
 
     def n_attuned(self):
         """Return the number of attuned magic items.
@@ -314,20 +305,7 @@ class Character:
 
         return value
 
-    def has_proficiency(self, proficiency):
-        """Check if character has a proficiency.
 
-        Args:
-            proficiency (str): name of a proficiency
-
-        Returns:
-            int: proficiency level (1 for proficiency, 2 for expertise) or 0
-
-        """
-        if proficiency in self.proficiencies.keys():
-            return self.proficiencies[proficiency]
-        else:
-            return 0
 
 # TODO make own files for inventory, spells, feats, notes
     # classes to manage each, so access would be like char.inventory.add

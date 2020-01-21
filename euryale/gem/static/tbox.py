@@ -204,7 +204,7 @@ class TBox(DBox):
                 wrapped = wrapper.wrap(text)
 
         else:
-            wrapped = [text]
+            wrapped = text.split("\n")
 
         # new, justify text
         if self.justify is not None:
@@ -219,6 +219,8 @@ class TBox(DBox):
 
         for y, line in enumerate(wrapped):
             for x, c in enumerate(line):
+                if c == "\n":
+                    continue
                 if all([y <= self.size[0] - 1, x <= self.size[1] - 1]):
                     if self.border is not False:
                         if y + 1 == self.size[0] - 1:
