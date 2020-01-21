@@ -56,7 +56,7 @@ class Main:
             return names[selector - 1]
         except ValueError:
             while True:
-                keyword_lookup = namelookup(selector)
+                keyword_lookup = self.namelookup(selector)
                 if keyword_lookup is None:
                     print(
                         "No matches found. Please try a different keyword, or select from previous list.")
