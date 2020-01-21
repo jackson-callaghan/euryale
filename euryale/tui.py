@@ -83,7 +83,7 @@ class Main:
                 self.g.resize(size)
 
                 # resize details
-                self.details.resize((5, size[1]), True, True)
+                self.details.resize((5, size[1]))
                 self.name.resize((1,
                                   len(self.c.name) if
                                   len(self.c.name) <= size[1] - 2 else
