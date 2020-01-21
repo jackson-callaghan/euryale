@@ -13,15 +13,15 @@ class Fore():
 
     """
 
-    BLACK   = '30'
-    RED     = '31'
-    GREEN   = '32'
-    YELLOW  = '33'
-    BLUE    = '34'
+    BLACK = '30'
+    RED = '31'
+    GREEN = '32'
+    YELLOW = '33'
+    BLUE = '34'
     MAGENTA = '35'
-    CYAN    = '36'
-    WHITE   = '37'
-    RESET   = '39'
+    CYAN = '36'
+    WHITE = '37'
+    RESET = '39'
 
 
 class Back():
@@ -32,15 +32,15 @@ class Back():
 
     """
 
-    BLACK   = '40'
-    RED     = '41'
-    GREEN   = '42'
-    YELLOW  = '43'
-    BLUE    = '44'
+    BLACK = '40'
+    RED = '41'
+    GREEN = '42'
+    YELLOW = '43'
+    BLUE = '44'
     MAGENTA = '45'
-    CYAN    = '46'
-    WHITE   = '47'
-    RESET   = '49'
+    CYAN = '46'
+    WHITE = '47'
+    RESET = '49'
 
 
 class Style():
@@ -51,24 +51,24 @@ class Style():
 
     """
 
-    DEFAULT     = "─│┌┐└┘├┤┬┴┼"
+    DEFAULT = "─│┌┐└┘├┤┬┴┼"
     SINGLELIGHT = "─│┌┐└┘├┤┬┴┼"
     SINGLEROUND = "─│╭╮╰╯├┤┬┴┼"
     SINGLEHEAVY = "━┃┏┓┗┛┣┫┳┻╋"
-    DOUBLE      = "═║╔╗╚╝╠╣╦╩╬"
-    DASH2LIGHT  = "╌╎┌┐└┘├┤┬┴┼"
-    DASH2HEAVY  = "╍╏┏┓┗┛┣┫┳┻╋"
-    DASH3LIGHT  = "┄┆┌┐└┘├┤┬┴┼"
-    DASH4HEAVY  = "┅┇┏┓┗┛┣┫┳┻╋"
-    DASH4LIGHT  = "┈┊┌┐└┘├┤┬┴┼"
-    DASH4HEAVY  = "┉┋┏┓┗┛┣┫┳┻╋"
-    DASH2ROUND  = "╌╎╭╮╰╯├┤┬┴┼"
-    DASH3ROUND  = "┄┆╭╮╰╯├┤┬┴┼"
-    DASH4ROUND  = "┈┊╭╮╰╯├┤┬┴┼"
+    DOUBLE = "═║╔╗╚╝╠╣╦╩╬"
+    DASH2LIGHT = "╌╎┌┐└┘├┤┬┴┼"
+    DASH2HEAVY = "╍╏┏┓┗┛┣┫┳┻╋"
+    DASH3LIGHT = "┄┆┌┐└┘├┤┬┴┼"
+    DASH4HEAVY = "┅┇┏┓┗┛┣┫┳┻╋"
+    DASH4LIGHT = "┈┊┌┐└┘├┤┬┴┼"
+    DASH4HEAVY = "┉┋┏┓┗┛┣┫┳┻╋"
+    DASH2ROUND = "╌╎╭╮╰╯├┤┬┴┼"
+    DASH3ROUND = "┄┆╭╮╰╯├┤┬┴┼"
+    DASH4ROUND = "┈┊╭╮╰╯├┤┬┴┼"
     BLOCKSHADEL = "░░░░░░░░░░░"
     BLOCKSHADEM = "▒▒▒▒▒▒▒▒▒▒▒"
     BLOCKSHADED = "▓▓▓▓▓▓▓▓▓▓▓"
-    FULLBLOCK   = "███████████"
+    FULLBLOCK = "███████████"
 
 
 class Chars():
@@ -78,7 +78,10 @@ class Chars():
     greater ease than might be typical.
     """
 
-    BLOCK_LIGHT  = "░"
+    BLOCK_LIGHT = "░"
     BLOCK_MEDIUM = "▒"
-    BLOCK_HEAVY  = "▓"
-    BLOCK_FULL   = "█"
+    BLOCK_HEAVY = "▓"
+    BLOCK_FULL = "█"
+    CHECK_EMPTY = "☐"
+    CHECK_CHECK = "☑"
+    CHECK_X = "☒"

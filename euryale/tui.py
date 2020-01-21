@@ -12,6 +12,7 @@ import gem.static as gs
 import os
 import string
 import math
+from gem.static.style import Chars
 
 
 def main():
@@ -143,8 +144,17 @@ def main():
             xtalign="center",
             xsalign="center"
         ))
-        # ab_info  = " \n  \n".format()
-        # for ab in
+        ab_info = " \n  \n".format()
+        for ab in c.ability_map[sk]:
+            prof = c.has_proficiency(ab)
+            if prof == 2:
+                prof = Chars.CHECK_X
+            elif prof == 1:
+                prof = Chars.CHECK_CHECK
+            else:
+                prof = Chars.CHECK_EMPTY
+            ab_mod = c.proficiency_bonus()
+            ab_info += "{}{}{}".format()
 
     g.composite()
 
