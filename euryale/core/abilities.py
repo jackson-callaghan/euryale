@@ -18,31 +18,29 @@ class Abilities:
         Args:
             cdata (dict): character data
         """
-        with open("data/abilities.json", "r") as ability_map_file:
-            self.ability_map = json.load(ability_map_file)
-        """TODO convert all these to underscore storage values,
-        and create properties for all of them.
-        """
-
         self.parent = parent
-        self._abilities = cdata.get("abilities", None)
+        self.abilities = cdata.get("abilities", None)
+        for ab in self.parent.ability_map.keys():
+            if ab not in self.abilities.keys():
+                self.abilities[ab] = 0
         self.proficiencies = cdata.get("proficiencies", {})
 
-    @property
-    def abilities(self):
+    def get_abilities(self):
         """Return a dict of all ability scores.
 
         Returns:
             dict: see above.
 
         """
+        for ab in self.parent.ability_map.keys():
+            if ab not in self.abilities.keys():
+                self.abilities[ab] = 0
         abilities = {}
-        for ab, score in self._abilities.items():
+        for ab, score in self.abilities.items():
             abilities[ab] = score
 
         return abilities
 
-    @property
     def ability_modifiers(self):
         """Return a dictionary of all modifiers.
 
@@ -51,16 +49,16 @@ class Abilities:
 
         """
         mod = {}
-        for ab, score in self.abilities.items():
+        for ab, score in self.get_abilities().items():
             mod[ab] = math.floor((score - 10) / 2)
 
         return mod
 
     def ability(self, ability):
-        return self.abilities[ability]
+        return self.get_abilities()[ability]
 
     def ability_mod(self, ability):
-        return self.ability_modifiers[ability]
+        return self.ability_modifiers()[ability]
 
     def skill_mod(self, skill):
         """Return a given skill modifier by name.
@@ -73,9 +71,9 @@ class Abilities:
 
         """
         mod = 0
-        for ab, sk in self.ability_map.items():
+        for ab, sk in self.parent.ability_map.items():
             if skill in sk:
-                mod += self.ability_modifiers[ab]
+                mod += self.ability_modifiers()[ab]
         if self.has_proficiency(skill):
             mod += self.proficiency_bonus()
         return mod

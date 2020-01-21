@@ -261,13 +261,13 @@ class Main:
     def fill_ab_containers(self):
         for ab in self.ab_containers:
 
-            ab_mod = self.c.abilities.ability_modifiers[ab.name]
+            ab_mod = self.c.abilities.ability_modifiers()[ab.name]
             if ab_mod >= 0:
-                ab_mod = "+{}".format(ab_mod)
+                ab_mod = "+{}".format(abs(ab_mod))
             else:
-                ab_mod = "-{}".format(ab_mod)
+                ab_mod = "-{}".format(abs(ab_mod))
             sk_info = " {:>2} Score\n{}{:>2} Modifier\n".format(
-                self.c.abilities.abilities[ab.name],
+                self.c.abilities.ability(ab.name),
                 ab_mod[0],
                 ab_mod[1:]
             )
@@ -281,9 +281,9 @@ class Main:
                     prof = " "
                 sk_mod = self.c.abilities.skill_mod(sk)
                 if sk_mod >= 0:
-                    sk_mod = "+{}".format(sk_mod)
+                    sk_mod = "+{}".format(abs(sk_mod))
                 else:
-                    sk_mod = "-{}".format(sk_mod)
+                    sk_mod = "-{}".format(abs(sk_mod))
                 sk_info += "{}{:>2} [{}] {}\n".format(
                     sk_mod[0], sk_mod[1:], prof, string.capwords(sk))
             ab.text = sk_info
