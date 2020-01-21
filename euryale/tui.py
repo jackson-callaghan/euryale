@@ -1,8 +1,8 @@
 """
 
-TODO: add documentation where necessary
-TODO: redo anything that should be turned into a property (see box classes)
-TODO: abilities and skills (ensure dynamic resizing)
+TODO: rework core.abilties to have generalized getters for abilities
+This will allow the definitition of new ability maps which can immediately
+fall into place with support for the upcoming modifier system.
 
 """
 
@@ -11,8 +11,6 @@ from core import Character, utilities
 import gem.static as gs
 import os
 import string
-import math
-from gem.static.style import Chars
 
 
 class Main:
@@ -23,6 +21,114 @@ class Main:
 
         # honestly just define blank values for every self value you're
         # going to define later so it's not a pain
+
+    def main(self):
+
+        termsize = self.get_terminal_size(fallback=(120, 29))
+        self.size = (termsize[1] - 2, termsize[0])
+
+        self.name = self.namelookup()
+        os.system('cls' if os.name == 'nt' else 'clear')
+
+        self.c = Character(utilities.read_char(self.name))
+
+        self.g = gs.Compositor(size=self.size)
+
+        self.details = self.g.maketbox(
+            name='details',
+            pos=(0, 0),
+            size=(5, self.size[1]),
+            border='default'
+        )
+
+        self.name = self.g.maketbox(
+            name="name",
+            size=(1, len(self.c.name)),
+            text=self.c.name,
+            fg="black",
+            bg="white",
+            ytarget=self.details,
+            ytalign="top",
+            ysalign="center",
+            xtarget=self.details,
+            xtalign="ileft",
+            xsalign="aleft"
+        )
+
+        self.ab_containers = []
+        self.ab_names = []
+        self.ab_box_size = (
+            max([len(ab) for ab in self.c.ability_map.values()]) + 4,
+            max([max([len(a) for a in ab])
+                 for ab in self.c.ability_map.values()]) + 10
+        )
+
+        self.make_ab_containers()
+
+        self.fill_ab_containers()
+
+        self.g.composite()
+
+        while True:
+
+            # check if terminal is resized and resize everything
+            ntermsize = self.get_terminal_size(fallback=(120, 29))
+            if ntermsize != termsize:
+
+                termsize = ntermsize
+                size = (termsize[1] - 2, termsize[0])
+
+                # resize compositor
+                # don't make this one smaller than anything else
+                self.g.resize(size)
+
+                # resize details
+                self.details.resize((5, size[1]), True, True)
+                self.name.resize((1,
+                                  len(self.c.name) if
+                                  len(self.c.name) <= size[1] - 2 else
+                                  size[1] - 2
+                                  ))
+
+                # resize skill boxes
+                self.resize_ab_containers()
+
+            if self.c.name != self.name.text:
+                self.name.resize((1,
+                                  len(self.c.name) if
+                                  len(self.c.name) <= size[1] - 2 else
+                                  size[1] - 2
+                                  ))
+                self.name.text = self.c.name
+
+            if len(self.ab_containers) != len(self.c.ability_map):
+                self.make_ab_containers()
+
+            self.details.text = "Level {} {} {} {} | Size: {} | Alignment: {} | Religion: {}\nAge: {} | Height: {} | Weight: {} | Skin: {} | Eyes: {} | Hair: {}".format(
+                string.capwords(str(self.c.character_level)),
+                string.capwords(str(self.c.gender)),
+                string.capwords(str(self.c.subrace)),
+                string.capwords(str(self.c.race)),
+                string.capwords(str(self.c.size)),
+                string.capwords(str(self.c.alignment)),
+                string.capwords(str(self.c.religion)),
+                string.capwords(str(self.c.age)),
+                self.c.height,
+                self.c.weight,
+                string.capwords(str(self.c.skin)),
+                string.capwords(str(self.c.eyes)),
+                string.capwords(str(self.c.hair))
+            )
+
+            self.fill_ab_containers()
+
+            self.g.composite()
+
+            again = input("> ")
+            try:  # made this shitty thing for live testing
+                exec(again)
+            except SyntaxError:
+                continue
 
     def namelookup(self, keyword=None):
         termsize = self.get_terminal_size(fallback=(120, 29))
@@ -71,259 +177,7 @@ class Main:
 
         return names
 
-    def main(self):
-
-        termsize = self.get_terminal_size(fallback=(120, 29))
-        size = (termsize[1] - 2, termsize[0])
-
-        name = self.namelookup()
-        os.system('cls' if os.name == 'nt' else 'clear')
-
-        c = Character(utilities.read_char(name))
-
-        g = gs.Compositor(size=size)
-        details = g.makedbox(
-            name='details',
-            pos=(0, 0),
-            size=(5, size[1]),
-            defaultpoints=True
-        )
-
-        name = g.maketbox(
-            name="name",
-            size=(1, len(c.name)),
-            text=c.name,
-            fg="black",
-            bg="white",
-            ytarget=details,
-            ytalign="top",
-            ysalign="center",
-            xtarget=details,
-            xtalign="ileft",
-            xsalign="aleft"
-        )
-
-        d_line1 = g.maketbox(
-            name='line1',
-            pos=(0, 0),
-            size=(1, size[1] - 2),
-            ytarget=details,
-            ytalign="top",
-            ysalign="below",
-            xtarget=details,
-            xtalign="ileft",
-            xsalign="aleft"
-        )
-        d_line2 = g.maketbox(
-            name='line1',
-            size=(1, size[1] - 2),
-            ytarget=d_line1,
-            ytalign="bottom",
-            ysalign="below",
-            xtarget=d_line1,
-            xtalign="left",
-            xsalign="aleft"
-        )
-
-        skill_containers = []
-        skill_names = []
-        i = max([max([len(a) for a in ab])
-                 for ab in c.ability_map.values()])
-        skill_container_size = (
-            max([len(ab) for ab in c.ability_map.values()]) + 4,
-            max([max([len(a) for a in ab])
-                 for ab in c.ability_map.values()]) + 10
-        )
-
-        row = 0
-        rowsize = 0
-        y = 0
-        n = 0
-
-        for i, skill in enumerate(c.ability_map.keys()):
-            if i == 0:
-                skill_containers.append(g.maketbox(
-                    pos=(0, 0),
-                    name=skill,
-                    size=skill_container_size,
-                    border="default",
-                    ytarget=details,
-                    ytalign="bottom",
-                    ysalign="below",
-                    xtarget=details,
-                    xtalign="left",
-                    xsalign="aleft"
-                ))
-            elif y != row:
-                skill_containers.append(g.maketbox(
-                    pos=(0, 0),
-                    name=skill,
-                    size=skill_container_size,
-                    border="default",
-                    ytarget=skill_containers[i - n],
-                    ytalign="bottom",
-                    ysalign="below",
-                    xtarget=skill_containers[i - n],
-                    xtalign="left",
-                    xsalign="aleft"
-                ))
-                row = y
-                rowsize = 0
-            else:
-                skill_containers.append(g.maketbox(
-                    pos=(0, 0),
-                    name=skill,
-                    size=skill_container_size,
-                    border="default",
-                    ytarget=skill_containers[i - 1],
-                    ytalign="top",
-                    ysalign="top",
-                    xtarget=skill_containers[i - 1],
-                    xtalign="oright",
-                    xsalign="aleft"
-                ))
-            rowsize += skill_container_size[1]
-            if rowsize + skill_container_size[1] >= size[1]:
-                y += 1
-            n += 1
-
-        for ab in skill_containers:
-            skill_names.append(g.maketbox(
-                name="{} title".format(ab.name),
-                pos=(0, 0),
-                size=(1, 3),
-                text=ab.name[0:3].upper(),
-                bg="white",
-                fg="black",
-                ytarget=ab,
-                ytalign="top",
-                ysalign="center",
-                xtarget=ab,
-                xtalign="ileft",
-                xsalign="aleft"
-            ))
-            ab_mod = c.abilities.modifiers[ab.name]
-            if ab_mod >= 0:
-                ab_mod = "+{}".format(ab_mod)
-            else:
-                ab_mod = "-{}".format(ab_mod)
-            sk_info = " {:>2} Score\n{}{:>2} Modifier\n".format(
-                c.abilities.abilities[ab.name],
-                ab_mod[0],
-                ab_mod[1:]
-            )
-            for sk in c.ability_map[ab.name]:
-                prof = c.abilities.has_proficiency(sk)
-                if prof == 2:
-                    prof = "^"
-                elif prof == 1:
-                    prof = "*"
-                else:
-                    prof = " "
-                sk_mod = c.abilities.skill_mod(sk)
-                if sk_mod >= 0:
-                    sk_mod = "+{}".format(sk_mod)
-                else:
-                    sk_mod = "-{}".format(sk_mod)
-                sk_info += "{}{:>2} [{}] {}\n".format(
-                    sk_mod[0], sk_mod[1:], prof, string.capwords(sk))
-            ab.text = sk_info
-
-        g.composite()
-
-        while True:
-
-            # check if terminal is resized and resize everything
-            ntermsize = self.get_terminal_size(fallback=(120, 29))
-            if ntermsize != termsize:
-
-                termsize = ntermsize
-                size = (termsize[1] - 2, termsize[0])
-
-                # resize compositor
-                # don't make this one smaller than anything else
-                g.resize(size)
-
-                # resize details
-                details.resize((5, size[1]), True, True)
-                d_line1.resize((1, size[1] - 2))
-                d_line2.resize((1, size[1] - 2))
-                name.resize((1,
-                             len(c.name) if
-                             len(c.name) <= size[1] - 2 else size[1] - 2
-                             ))
-
-                row = 0
-                rowsize = 0
-                y = 0
-                n = 0
-
-                # resize skill boxes
-                for i, box in enumerate(skill_containers):
-                    if i == 0:
-                        box.ytarget = details
-                        box.ytalign = "bottom"
-                        box.ysalign = "below"
-                        box.xtarget = details
-                        box.xtalign = "left"
-                        box.xsalign = "aleft"
-                    elif y != row:
-                        box.ytarget = skill_containers[i - n]
-                        box.ytalign = "bottom"
-                        box.ysalign = "below"
-                        box.xtarget = skill_containers[i - n]
-                        box.xtalign = "left"
-                        box.xsalign = "aleft"
-                        row = y
-                        rowsize = 0
-                    else:
-                        box.ytarget = skill_containers[i - 1]
-                        box.ytalign = "top"
-                        box.ysalign = "top"
-                        box.xtarget = skill_containers[i - 1]
-                        box.xtalign = "oright"
-                        box.xsalign = "aleft"
-                    rowsize += skill_container_size[1]
-                    if rowsize + skill_container_size[1] >= size[1]:
-                        y += 1
-                    n += 1
-
-            if c.name != name.text:
-                name.resize((1,
-                             len(c.name) if
-                             len(c.name) <= size[1] - 2 else size[1] - 2
-                             ))
-                name.text = c.name
-
-            d_line1.text = "Level {} {} {} {} | Size: {} | Alignment: {} | Religion: {}".format(
-                string.capwords(str(c.character_level)),
-                string.capwords(str(c.gender)),
-                string.capwords(str(c.subrace)),
-                string.capwords(str(c.race)),
-                string.capwords(str(c.size)),
-                string.capwords(str(c.alignment)),
-                string.capwords(str(c.religion)),
-            )
-            d_line2.text = "Age: {} | Height: {} | Weight: {} | Skin: {} | Eyes: {} | Hair: {}".format(
-
-                string.capwords(str(c.age)),
-                c.height,
-                c.weight,
-                string.capwords(str(c.skin)),
-                string.capwords(str(c.eyes)),
-                string.capwords(str(c.hair))
-            )
-
-            g.composite()
-
-            again = input("> ")
-            try:  # made this shitty thing for live testing
-                exec(again)
-            except SyntaxError:
-                continue
-
     # courtesy of Bernardas Ališauskas
-
     def get_terminal_size(self, fallback=(80, 24)):
         for i in range(0, 3):
             try:
@@ -334,6 +188,140 @@ class Main:
         else:  # set default if the loop completes which means all failed
             columns, rows = fallback
         return columns, rows
+
+    def make_ab_containers(self):
+        self.ab_containers = []
+        row = 0
+        rowsize = 0
+        y = 0
+        n = 0
+        for i, skill in enumerate(self.c.ability_map.keys()):
+            if i == 0:
+                self.ab_containers.append(self.g.maketbox(
+                    pos=(0, 0),
+                    name=skill,
+                    size=self.ab_box_size,
+                    border="default",
+                    ytarget=self.details,
+                    ytalign="bottom",
+                    ysalign="below",
+                    xtarget=self.details,
+                    xtalign="left",
+                    xsalign="aleft"
+                ))
+            elif y != row:
+                self.ab_containers.append(self.g.maketbox(
+                    pos=(0, 0),
+                    name=skill,
+                    size=self.ab_box_size,
+                    border="default",
+                    ytarget=self.ab_containers[i - n],
+                    ytalign="bottom",
+                    ysalign="below",
+                    xtarget=self.ab_containers[i - n],
+                    xtalign="left",
+                    xsalign="aleft"
+                ))
+                row = y
+                rowsize = 0
+                n = 0
+            else:
+                self.ab_containers.append(self.g.maketbox(
+                    pos=(0, 0),
+                    name=skill,
+                    size=self.ab_box_size,
+                    border="default",
+                    ytarget=self.ab_containers[i - 1],
+                    ytalign="top",
+                    ysalign="top",
+                    xtarget=self.ab_containers[i - 1],
+                    xtalign="oright",
+                    xsalign="aleft"
+                ))
+            rowsize += self.ab_box_size[1]
+            if rowsize + self.ab_box_size[1] >= self.size[1]:
+                y += 1
+            n += 1
+
+            self.ab_names.append(self.g.maketbox(
+                name="{} title".format(skill[0:3]),
+                pos=(0, 0),
+                size=(1, 3),
+                text=skill[0:3].upper(),
+                bg="white",
+                fg="black",
+                ytarget=self.ab_containers[i],
+                ytalign="top",
+                ysalign="center",
+                xtarget=self.ab_containers[i],
+                xtalign="ileft",
+                xsalign="aleft"
+            ))
+
+    def fill_ab_containers(self):
+        for ab in self.ab_containers:
+
+            ab_mod = self.c.abilities.modifiers[ab.name]
+            if ab_mod >= 0:
+                ab_mod = "+{}".format(ab_mod)
+            else:
+                ab_mod = "-{}".format(ab_mod)
+            sk_info = " {:>2} Score\n{}{:>2} Modifier\n".format(
+                self.c.abilities.abilities[ab.name],
+                ab_mod[0],
+                ab_mod[1:]
+            )
+            for sk in self.c.ability_map[ab.name]:
+                prof = self.c.abilities.has_proficiency(sk)
+                if prof == 2:
+                    prof = "^"
+                elif prof == 1:
+                    prof = "*"
+                else:
+                    prof = " "
+                sk_mod = self.c.abilities.skill_mod(sk)
+                if sk_mod >= 0:
+                    sk_mod = "+{}".format(sk_mod)
+                else:
+                    sk_mod = "-{}".format(sk_mod)
+                sk_info += "{}{:>2} [{}] {}\n".format(
+                    sk_mod[0], sk_mod[1:], prof, string.capwords(sk))
+            ab.text = sk_info
+
+    def resize_ab_containers(self):
+        row = 0
+        rowsize = 0
+        y = 0
+        n = 0
+        for i, box in enumerate(self.ab_containers):
+            if i == 0:
+                box.ytarget = self.details
+                box.ytalign = "bottom"
+                box.ysalign = "below"
+                box.xtarget = self.details
+                box.xtalign = "left"
+                box.xsalign = "aleft"
+            elif y != row:
+                box.ytarget = self.ab_containers[i - n]
+                box.ytalign = "bottom"
+                box.ysalign = "below"
+                box.xtarget = self.ab_containers[i - n]
+                box.xtalign = "left"
+                box.xsalign = "aleft"
+                row = y
+                rowsize = 0
+                n = 0
+            else:
+                box.ytarget = self.ab_containers[i - 1]
+                box.ytalign = "top"
+                box.ysalign = "top"
+                box.xtarget = self.ab_containers[i - 1]
+                box.xtalign = "oright"
+                box.xsalign = "aleft"
+            rowsize += self.ab_box_size[1]
+            if rowsize + self.ab_box_size[1] >= self.size[1]:
+                y += 1
+            n += 1
 
 
 if __name__ == "__main__":
