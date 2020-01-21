@@ -261,7 +261,7 @@ class Main:
     def fill_ab_containers(self):
         for ab in self.ab_containers:
 
-            ab_mod = self.c.abilities.modifiers[ab.name]
+            ab_mod = self.c.abilities.ability_modifiers[ab.name]
             if ab_mod >= 0:
                 ab_mod = "+{}".format(ab_mod)
             else:

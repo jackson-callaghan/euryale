@@ -86,7 +86,6 @@ class Character:
         self.languages = cdata.get("languages", [])
         # dict of proficiency: level (1 for proficient, 2 for expertise)
 
-
         self._max_attuned = cdata.get("max_attuned", None)
         self._attuend = cdata.get("attuned", None)
         self._n_attuned = cdata.get("n_attuned", None)
@@ -112,13 +111,7 @@ class Character:
                 self.subclasses[i],
                 i)
                 for i in self.classes.keys()])
-        line3 = "\n".join((
-            str(self.abilities.str),
-            str(self.abilities.dex),
-            str(self.abilities.con),
-            str(self.abilities.int),
-            str(self.abilities.wis),
-            str(self.abilities.cha)))
+        line3 = "\n".join(i for i in self.abilities.abilities.keys())
 
         return "\n".join((line1, line2, line3))
 
@@ -137,13 +130,15 @@ class Character:
             for class_, diepair in self.max_hit_dice().items():
                 # diepair: 0: hitdie value, 1: number of hitdie
                 if class_ == self.starting_class:
-                    total += diepair[0] + self.abilities.con_mod
+                    total += diepair[0] + \
+                        self.abilities.ability_mod("constitution")
                     total += (
                         (diepair[0] / 2) + 1
-                        + self.abilities.con_mod) * (diepair[1] - 1)
+                        + self.abilities.ability_mod("constitution")) \
+                        * (diepair[1] - 1)
                 else:
                     total += (diepair[0] / 2) + 1 + \
-                        self.abilities.con_mod * diepair[1]
+                        self.abilities.ability_mod("constitution") * diepair[1]
 
             return total
 
@@ -304,7 +299,6 @@ class Character:
         self.mod_health(-value)
 
         return value
-
 
 
 # TODO make own files for inventory, spells, feats, notes
