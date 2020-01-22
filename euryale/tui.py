@@ -74,18 +74,18 @@ class Main:
             if ntermsize != termsize:
 
                 termsize = ntermsize
-                size = (termsize[1] - 2, termsize[0])
+                self.size = (termsize[1] - 2, termsize[0])
 
                 # resize compositor
                 # don't make this one smaller than anything else
-                self.g.resize(size)
+                self.g.resize(self.size)
 
                 # resize details
-                self.details.resize((5, size[1]))
+                self.details.resize((5, self.size[1]))
                 self.name.resize((1,
                                   len(self.c.name) if
-                                  len(self.c.name) <= size[1] - 2 else
-                                  size[1] - 2
+                                  len(self.c.name) <= self.size[1] - 2 else
+                                  self.size[1] - 2
                                   ))
 
                 # resize skill boxes
@@ -94,13 +94,14 @@ class Main:
             if self.c.name != self.name.text:
                 self.name.resize((1,
                                   len(self.c.name) if
-                                  len(self.c.name) <= size[1] - 2 else
-                                  size[1] - 2
+                                  len(self.c.name) <= self.ize[1] - 2 else
+                                  self.size[1] - 2
                                   ))
                 self.name.text = self.c.name
 
             if len(self.ab_containers) != len(self.c.ability_map):
                 self.make_ab_containers()
+                self.resize_ab_containers()
 
             self.details.text = "Level {} {} {} {} | Size: {} | Alignment: {} | Religion: {}\nAge: {} | Height: {} | Weight: {} | Skin: {} | Eyes: {} | Hair: {}".format(
                 string.capwords(str(self.c.character_level)),
