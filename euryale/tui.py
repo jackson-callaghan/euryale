@@ -1,8 +1,6 @@
 """
 
-TODO: rework core.abilties to have generalized getters for abilities
-This will allow the definitition of new ability maps which can immediately
-fall into place with support for the upcoming modifier system.
+TODO: fix downsize of terminal crash
 
 """
 
