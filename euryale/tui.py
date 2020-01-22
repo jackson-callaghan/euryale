@@ -1,7 +1,5 @@
 """
 
-TODO: fix downsize of terminal crash
-
 """
 
 
@@ -32,10 +30,12 @@ class Main:
 
         self.g = gs.Compositor(size=self.size)
 
+        detlen = max(len(i) for i in self.details_text().split("\n")) + 2
+
         self.details = self.g.maketbox(
             name='details',
             pos=(0, 0),
-            size=(5, self.size[1]),
+            size=(5, self.size[1] if self.size[1] <= detlen else detlen),
             border='default'
         )
 
@@ -62,8 +62,6 @@ class Main:
         )
 
         self.make_ab_containers()
-
-        self.fill_ab_containers()
 
         self.g.composite()
 
@@ -103,21 +101,7 @@ class Main:
                 self.make_ab_containers()
                 self.resize_ab_containers()
 
-            self.details.text = "Level {} {} {} {} | Size: {} | Alignment: {} | Religion: {}\nAge: {} | Height: {} | Weight: {} | Skin: {} | Eyes: {} | Hair: {}".format(
-                string.capwords(str(self.c.character_level)),
-                string.capwords(str(self.c.gender)),
-                string.capwords(str(self.c.subrace)),
-                string.capwords(str(self.c.race)),
-                string.capwords(str(self.c.size)),
-                string.capwords(str(self.c.alignment)),
-                string.capwords(str(self.c.religion)),
-                string.capwords(str(self.c.age)),
-                self.c.height,
-                self.c.weight,
-                string.capwords(str(self.c.skin)),
-                string.capwords(str(self.c.eyes)),
-                string.capwords(str(self.c.hair))
-            )
+            self.details.text = self.details_text()
 
             self.fill_ab_containers()
 
@@ -158,7 +142,10 @@ class Main:
             "Select name by number or refine matches by keyword: \n> ")
         try:
             selector = int(selector)
-            return names[selector - 1]
+            try:
+                return names[selector - 1]
+            except IndexError:
+                return self.namelookup()
         except ValueError:
             while True:
                 keyword_lookup = self.namelookup(selector)
@@ -187,6 +174,25 @@ class Main:
         else:  # set default if the loop completes which means all failed
             columns, rows = fallback
         return columns, rows
+
+    def details_text(self):
+        det = "Level {} {} {} {} | Size: {} | Alignment: {} | Religion: {}\nAge: {} | Height: {} | Weight: {} | Skin: {} | Eyes: {} | Hair: {}".format(
+            string.capwords(str(self.c.character_level)),
+            string.capwords(str(self.c.gender)),
+            string.capwords(str(self.c.subrace)),
+            string.capwords(str(self.c.race)),
+            string.capwords(str(self.c.size)),
+            string.capwords(str(self.c.alignment)),
+            string.capwords(str(self.c.religion)),
+            string.capwords(str(self.c.age)),
+            self.c.height,
+            self.c.weight,
+            string.capwords(str(self.c.skin)),
+            string.capwords(str(self.c.eyes)),
+            string.capwords(str(self.c.hair))
+        )
+
+        return det
 
     def make_ab_containers(self):
         self.ab_containers = []
