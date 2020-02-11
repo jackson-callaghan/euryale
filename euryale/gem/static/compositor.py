@@ -454,4 +454,4 @@ class Compositor:
             grid (list): 2d list of segments
 
         """
-        self.rout(grid)
+        self.rout(self.grid)
