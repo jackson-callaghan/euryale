@@ -10,19 +10,19 @@ I don't like most ways I've worked with character sheets in the past, and I like
 
 1. Store and retrieve information from json file via command line
 
-2. Display and edit basic info with minimal calculation
+2. Calculations for more complicated stats
 
-3. Output to form-fillable pdf
+3. Modifier system for JSON-defined items/feats/etc
 
-4. Action, resource, turn management with calculations and optional auto-dice
+4. Basic Command-line interface
 
-5. Support for custom modifiers through feats and magic items
+5. Output to pdf
 
 6. More user-friendly creations and editing tools for character, items, feats, etc
 
-7. Some fancy polish and general ease-of-use
+7. Refine API for connecting to a UI
 
-8. Create gem.dynamic and redesign to use it
+8. Create either a TUI or GUI (or both) using existing cross-platform libraries.
 
 
 ## Important considerations
