@@ -99,7 +99,7 @@ class Character:
             str: see above.
 
         """
-        line1 = "{}: {} {} {}. {}. \n".format(
+        line1 = "{}: {} {} {}. {}.".format(
             self.name,
             self.size,
             self.subrace,
@@ -111,7 +111,7 @@ class Character:
                 self.subclasses[i],
                 i)
                 for i in self.classes.keys()])
-        line3 = "\n".join(i for i in self.abilities.abilities.keys())
+        line3 = "\n".join("{:12} : {:2d}".format(ab, sc) for ab, sc in self.abilities.abilities.items())
 
         return "\n".join((line1, line2, line3))
 

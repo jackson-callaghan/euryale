@@ -28,3 +28,4 @@ I don't like most ways I've worked with character sheets in the past, and I like
 ## Important considerations
 
 - Log file which allows for undoing of actions
+<!-- Note to self: use https://opensource.com/article/17/5/4-practical-python-libraries as a guide for making prompt -->
