@@ -6,34 +6,46 @@ any method that handles numbers, and should expect to lookup using roughly its
 own name.
 """
 
+# TODO implement registry items
+
+
+class RegItem:
+    """Registry Item.
+
+    Contains all the information required for modifiers, etc.
+    """
+
+    def __init__(self, parent, data):
+        """Initialize a registry item.
+
+        Args:
+            name (str): the name of the registry item.
+        """
+        self.name = data.get("name")
+        self.description = data.get("description")
+        self.parent = parent
+        self.activation = data.get("activation")
+        self.charges = data.get("charges")
+        self.used = data.get("used")
+        self.duration = data.get("duration")
+        self.active = data.get("active")
+        self.recoverywhen = data.get("recoverywhen")
+        self.recoveryamt = data.get("recoveryamt")
+        self.modlist = data.get("modlist")
+        self.modtype = data.get("modtype")
+        self.mod = data.get("mod")
+
+    # TODO self handling method given number
+
+
+# TODO implement registry
+
 
 class Registry:
-    """Registry Class.
+    """Registry.
 
-    Mostly holds methods for registry editing.
+    Contains all the registry items, and methods for interfacing with them.
     """
 
     def __init__(self):
-        """Instantiate the Registry class.
-
-        Does not read in the registry, another method must be called for this.
-        """
-        self.reg = {}
-
-    def additem(self, item):
-        """Add an item to the registry.
-
-        Args:
-            item (dict): dictionary of selector: str, and data: dict
-        """
-        selector = item.get("selector")
-        data = item.get("data")
-        self.reg[selector] = data
-
-    def removeitem(self, selector):
-        """Remove an item from the registry.
-
-        Args:
-            selector (str): selector
-        """
-        self.reg.pop(selector)
+        None

@@ -8,7 +8,10 @@ the character.
 RULE: If it cannot be directly set, make it a function, instead of a property.
       If it can be directly set, make it a property.
 
-TODO: add support for display versions of all calculated values as a stop-gap
+TODO: ensure you've got getters/setters for basically everything
+TODO: deside how the registry will work
+TODO: write in basic logic for getting modifiers, see max_hp for example
+TODO: using previous, make list of pre-defined modifiers
 """
 
 import json
@@ -17,6 +20,7 @@ from core import abilities as ab
 from core import feats as ft
 from core import inventory as iv
 from core import magic as mg
+from core import registry as rg
 
 
 class Character:
@@ -78,10 +82,10 @@ class Character:
         self.subclasses = cdata.get("subclasses", None)
 
         # ---- some more information ----
-        # holds either rolled health or None to indicate auto-health calc
-        self._max_health = cdata.get("max health", None)
-        self.health = cdata.get("health", self.max_health)
-        self.temp_health = cdata.get("temp health", 0)
+        # holds either rolled hp or None to indicate auto-hp calc
+        self._max_hp = cdata.get("max hp", None)
+        self.hp = cdata.get("hp", self.max_hp)
+        self.temp_hp = cdata.get("temp hp", 0)
 
         self.languages = cdata.get("languages", [])
         # dict of proficiency: level (1 for proficient, 2 for expertise)
@@ -89,6 +93,9 @@ class Character:
         self._max_attuned = cdata.get("max_attuned", None)
         self._attuend = cdata.get("attuned", None)
         self._n_attuned = cdata.get("n_attuned", None)
+
+        # registry of modifiers
+        self.registry = registry()
 
     def __str__(self):
         """Return string format of character sheet.
@@ -99,6 +106,7 @@ class Character:
             str: see above.
 
         """
+        # TODO: re-write this for useful at-a-glance info
         line1 = "{}: {} {} {}. {}. \n".format(
             self.name,
             self.size,
@@ -116,35 +124,37 @@ class Character:
         return "\n".join((line1, line2, line3))
 
     @property
-    def max_health(self):
-        """Return max health.
+    def max_hp(self):
+        """Return max hp.
 
         Returns:
-            int: Max health
+            int: Max hp
 
         """
-        if self._max_health is not None:
-            return self._max_health
-        else:
-            total = 0
+        mhp = 0
+        if self._max_hp is not None:  # if it's custom set
+            mhp = self._max_hp
+        else:  # otherwise auto-calculate
             for class_, diepair in self.max_hit_dice().items():
                 # diepair: 0: hitdie value, 1: number of hitdie
                 if class_ == self.starting_class:
-                    total += diepair[0] + \
-                        self.abilities.ability_mod("constitution")
-                    total += (
-                        (diepair[0] / 2) + 1
-                        + self.abilities.ability_mod("constitution")) \
-                        * (diepair[1] - 1)
+                    mhp += (diepair[0] +
+                            self.abilities.ability_mod("constitution"))
+                    mhp += ((diepair[0] / 2) +
+                            1 +
+                            (self.abilities.ability_mod("constitution")) *
+                            (diepair[1] - 1))
                 else:
-                    total += (diepair[0] / 2) + 1 + \
+                    mhp += (diepair[0] / 2) + 1 + \
                         self.abilities.ability_mod("constitution") * diepair[1]
 
-            return total
+        # if "max_hp" in self.registry
 
-    @max_health.setter
-    def max_health(self, value):
-        self._max_health = value
+        return mhp  # return the final maximum hp calculation
+
+    @max_hp.setter
+    def max_hp(self, value):
+        self._max_hp = value
 
     @property
     def max_attuned(self):
@@ -236,27 +246,27 @@ class Character:
         self.character_level += 1
         self.update_classes(**clevels)
 
-    def mod_health(self, value):
-        """Modify current health value.
+    def mod_hp(self, value):
+        """Modify current hp value.
 
-        If healing above maximum, health will be set to max. If taking damage
+        If healing above maximum, hp will be set to max. If taking damage
         greater than negative maximum, returns death signifier.
 
         Args:
-            value (int): Health change, either negative or positive.
+            value (int): hp change, either negative or positive.
 
         Returns:
-            int, str: new health or death signifier.
+            int, str: new hp or death signifier.
 
         """
-        if self.health + value >= self.max_health:
-            self.health = self.max_health
-        elif self.health + value <= 0 - self.max_health:
-            self.health += value
+        if self.hp + value >= self.max_hp:
+            self.hp = self.max_hp
+        elif self.hp + value <= 0 - self.max_hp:
+            self.hp += value
             return "death"
         else:
-            self.health += value
-            return self.health
+            self.hp += value
+            return self.hp
 
     def heal(self, value):
         """Heal the given amount.
@@ -268,7 +278,7 @@ class Character:
             int: amount healed.
 
         """
-        self.mod_health(value)
+        self.mod_hp(value)
 
         return value
 
@@ -296,7 +306,7 @@ class Character:
         #                     and feat["modifies"] == dtype):
         #                 value = math.floor(value / 2)
 
-        self.mod_health(-value)
+        self.mod_hp(-value)
 
         return value
 

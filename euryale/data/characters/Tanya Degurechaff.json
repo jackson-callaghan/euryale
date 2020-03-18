@@ -19,9 +19,9 @@
     "subclasses": {
         "wizard": "evocation"
     },
-    "max health": null,
-    "health": 114,
-    "temp health": 0,
+    "max hp": null,
+    "hp": 114,
+    "temp hp": 0,
     "background": "soldier",
     "alignment": "Lawful Evil",
     "religion": "Being X",
@@ -60,6 +60,34 @@
     "n_attuned": null,
     "feats": {
         "passive": {
+            "level # ASI": { // an example feat for development
+                "name": "level # ASI",
+                "description": "Ability Score Increase",
+                "charges": null,
+                "used": null,
+                "duration": null,
+                "active": null,
+                "recoverywhen": null,
+                "recoveryamt": null,
+                "modifiers": {
+                    "name": "ASI",
+                    "desc": "Ability Score Increase",
+                    "parent": null,
+                    "activation": "passive",
+                    "modlist": [
+                        [
+                            "and",
+                            "intelligence ability score"
+                        ],
+                        [
+                            "and",
+                            "wisdom ability score"
+                        ]
+                    ],
+                    "modtype": "delta",
+                    "mod": "1"
+                }
+            },
             "spell sniper": {},
             "sculpt spells": {
                 "description": "AoE evocation spells can be made to ignore up to 1 + spell level targets"
@@ -97,7 +125,6 @@
             "evocation savant": {
                 "description": "gold and time for learning evocation spells is halved."
             },
-            "observant": {},
             "curse of the euryale": {
                 "description": "-2 to all saves",
                 "modifies": {
@@ -120,9 +147,7 @@
                     "message": "recover half wizard level worth of spell slots"
                 }
             },
-            "time's end": {},
-            "wizard spellcasting": {},
-            "warlock spellcasting": {}
+            "wizard spellcasting": {}
         }
     },
     "inventory": {
@@ -132,7 +157,7 @@
             "onuse": {
                 "healing": {
                     "category": "stats",
-                    "selector": "health",
+                    "selector": "hp",
                     "modtype": "delta",
                     "value": "4d4+4"
                 },
@@ -153,7 +178,7 @@
             "onuse": {
                 "healing": {
                     "category": "stats",
-                    "selector": "health",
+                    "selector": "hp",
                     "modtype": "delta",
                     "value": "1d4+4"
                 },
@@ -374,7 +399,7 @@
             "onuse": {
                 "healing": {
                     "category": "stats",
-                    "selector": "health",
+                    "selector": "hp",
                     "modtype": "delta",
                     "value": "10d4+20"
                 },

@@ -1,6 +1,6 @@
 """Handle all information relative to abilities.
 
-Split off for organization largely.
+Split off largely for organization.
 """
 import math
 import json
