@@ -6,6 +6,8 @@ any method that handles numbers, and should expect to lookup using roughly its
 own name.
 """
 
+from dice_notation.parser import DiceParser
+
 # TODO implement registry items
 
 
@@ -26,6 +28,7 @@ class RegItem:
         self.parent = parent
         self.activation = data.get("activation")
         self.charges = data.get("charges")
+        self.chperuse = data.get("charges per use")
         self.used = data.get("used")
         self.duration = data.get("duration")
         self.active = data.get("active")
@@ -36,9 +39,10 @@ class RegItem:
         self.mod = data.get("mod")
 
     # TODO self handling method given number
+    def handle(n):
+        if self.activation == "passive":
 
-
-# TODO implement registry
+            # TODO implement registry
 
 
 class Registry:

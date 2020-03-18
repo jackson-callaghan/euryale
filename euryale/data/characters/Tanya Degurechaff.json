@@ -65,6 +65,7 @@
                 "description": "Ability Score Increase",
                 "charges": null,
                 "used": null,
+                "charges per use": null,
                 "duration": null,
                 "active": null,
                 "recoverywhen": null,

@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "/home/gitpod/.pyenv/shims/python3",
+    "python.pythonPath": "C:\\Python37\\python.exe",
     "editor.autoSave": "on"
 }
