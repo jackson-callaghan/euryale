@@ -23,14 +23,21 @@ from core import magic as mg
 from core import registry as rg
 
 
+def standard_dialog(prompt):
+    return input(prompt)
+
+
 class Character:
     """Character class."""
 
-    def __init__(self, cdata):
+    def __init__(self, cdata, outcb=print, dialogcb='default'):
         """Instantiate the character given its data.
 
         Args:
             cdata (dict): Dictionary of character data, from read_char
+            outcb (func): Callback function for displaying information
+            dialogcb (func): Callback function for when a dialog must be
+                presented
 
         Raises:
             ValueError: If character has no starting class.
@@ -95,7 +102,14 @@ class Character:
         self._n_attuned = cdata.get("n_attuned", None)
 
         # registry of modifiers
-        self.registry = registry()
+        self.registry = rg.Registry(self)
+
+        # register dialog callbacks
+        self.outcb = outcb
+        if dialogcb is None:
+            self.dialogcb = standard_dialog
+        else:
+            self.dialogcb = dialogcb
 
     def __str__(self):
         """Return string format of character sheet.
@@ -119,7 +133,8 @@ class Character:
                 self.subclasses[i],
                 i)
                 for i in self.classes.keys()])
-        line3 = "\n".join("{:12} : {:2d}".format(ab, sc) for ab, sc in self.abilities.abilities.items())
+        line3 = "\n".join("{:12} : {:2d}".format(ab, sc)
+                          for ab, sc in self.abilities.abilities.items())
 
         return "\n".join((line1, line2, line3))
 

@@ -17,7 +17,7 @@ class RegItem:
     Contains all the information required for modifiers, etc.
     """
 
-    def __init__(self, parent, data):
+    def __init__(self, registry, parent, data):
         """Initialize a registry item.
 
         Args:
@@ -93,5 +93,5 @@ class Registry:
     Contains all the registry items, and methods for interfacing with them.
     """
 
-    def __init__(self):
+    def __init__(self, parent):
         None
