@@ -1,5 +1,10 @@
 # euryale
 
+ <!-- Version -->
+ <a href="https://github.com/token-diabetic/euryale">
+ <img src="https://flat.badgen.net/github/commits/token-diabetic/euryale" alt="commits">
+ </a>
+
 A character sheet manager/editor written in python
 
 ## Motivation
