@@ -39,6 +39,11 @@ class RegItem:
         self.mod = data.get("mod")
         self.parser = DiceParser()
 
+        # TODO register a callback function for information passage
+        # this function is to be implemented by whatever UI is running things
+        # function should give information to user and return something
+        # can be different function based on activation type (done by UI)
+
     # TODO self handling method given number
     def modify(self, n):
 

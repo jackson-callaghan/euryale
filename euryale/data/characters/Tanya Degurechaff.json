@@ -60,7 +60,7 @@
     "n_attuned": null,
     "feats": {
         "passive": {
-            "level # ASI": { // an example feat for development
+            "level # ASI": {
                 "name": "level # ASI",
                 "description": "Ability Score Increase",
                 "charges": null,
